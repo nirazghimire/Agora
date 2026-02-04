@@ -7,10 +7,10 @@ A full-stack e-commerce web application supporting multiple user roles: **Buyers
 - **Frontend**: Next.js + TypeScript  
   - React Server Components  
   - Tailwind CSS + Shadcn/ui 
-  - NextAuth.js / Auth.js (for authentication)  
+  - NextAuth.js  
 
 - **Backend**: Django  
-  - Django REST Framework Simple JWT (token authentication)  
+  - Django REST Framework 
 
 - **Database**: PostgreSQL
 
@@ -23,7 +23,7 @@ A full-stack e-commerce web application supporting multiple user roles: **Buyers
 - JWT-based authentication
 
 ### Buyer Features
-- Product search (full-text + filters)
+- Product search 
 - Product comparison
 - Shopping cart & checkout
 - Order history
@@ -32,16 +32,13 @@ A full-stack e-commerce web application supporting multiple user roles: **Buyers
 ### Seller Features
 - Add / edit / delete products
 - Manage inventory & pricing
-- View sales analytics
 - Payouts via integrated payment gateway
 
 ### Admin Features
 - Approve / block users & products
 - Moderate content & reviews
-- Platform-wide analytics & logs
 
-### Team Members
+## Team Members
 
 - Ayush Dhungana (ad2431)
 - Niraj Ghimire (ng733)
-
