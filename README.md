@@ -41,6 +41,7 @@ A full-stack e-commerce web application supporting multiple user roles: **Buyers
 - Platform-wide analytics & logs
 
 ### Team Members
+
 - Ayush Dhungana (ad2431)
 - Niraj Ghimire (ng733)
 
