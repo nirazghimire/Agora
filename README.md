@@ -42,4 +42,4 @@ A full-stack e-commerce web application supporting multiple user roles: **Buyers
 
 - Ayush Dhungana (ad2431)
 - Niraj Ghimire (ng733)
-- Rohan Patel
+- Rohan Patel (rrp196)
