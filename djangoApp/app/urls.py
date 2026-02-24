@@ -17,10 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from src import views
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'products', views.ProductViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),         # name is for the internal use by django itself; 
     path('buyer/',views.buyer,name='buyer'),
-    path('login/',views.login,name='login')
+    path('login/',views.login,name='login'),
+    path('api/',include(router.urls)),
+    path('seller/',views.seller,name='seller'),
+
 ]

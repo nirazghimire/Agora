@@ -1,0 +1,28 @@
+{% extends "home.html" %}
+
+{% block title %}Seller Dashboard{% endblock %}
+
+{% block content %}
+
+<h2>Seller Dashboard</h2>
+
+<div class="card">
+    <h4>Add Product</h4>
+    <form action="/add-product/" method="post">
+        <input type="text" name="name" placeholder="Product Name">
+        <input type="text" name="price" placeholder="Product Price">
+        <input type="text" name="description" placeholder="Product Description">
+        <input type="text" name="image" placeholder="Product Image">
+        <button type="submit">Add Product</button>
+    </form>
+</div>
+<div class="card">
+    <h4>Currently Selling</h4>
+    <ul>
+        {% for product in products %}
+        <li>{{ product.title }} - {{ product.price }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
