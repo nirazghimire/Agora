@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}JWT Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-0">TEST TEST TEST You're inside JWT Dashboard</h2>
+    <p class="text-muted mb-0">Logged in as <strong>{{ username }}</strong></p>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-primary text-white">Access Token</div>
+      <div class="card-body">
+        <p class="small text-muted">This signed token is sent on every request. It has three base64-encoded parts separated by dots:</p>
+        <code class="d-block bg-light p-3 rounded" style="word-break:break-all; font-size: 0.8rem;">{{ access_token }}</code>
+        <hr>
+        <p class="small text-muted mb-1">Full authorization header:</p>
+        <code class="d-block bg-light p-3 rounded" style="word-break:break-all; font-size: 0.8rem;">{{ header }}</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Decoded Payload</div>
+      <div class="card-body">
+        <p class="small text-muted">This data is embedded inside the token itself no database lookup needed to read it:</p>
+        <pre class="bg-light p-3 rounded small mb-0">{{ payload }}</pre>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}

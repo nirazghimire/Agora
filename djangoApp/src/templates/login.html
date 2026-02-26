@@ -1,4 +1,4 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block title %}Login{% endblock %}
 
@@ -6,16 +6,18 @@
 
 <h2>Login</h2>
 
-<form>
+<form method="post">
+    {% csrf_token %}
     <label>Username</label><br>
-    <input type="text" placeholder="Enter username"><br><br>
+    <input type="text" placeholder="Enter username" name="username"><br><br>
 
     <label>Password</label><br>
-    <input type="password" placeholder="Enter password"><br><br>
-
+    <input type="password" placeholder="Enter password" name="password"><br><br>
+ 
     <button type="submit">Login</button>
 </form>
+<br>
 
-<p>Don't have an account? Sign up</p>
+<p>Don't have an account? </p> <a href="/signup"><button>Sign up</button></a>
 
 {% endblock %}

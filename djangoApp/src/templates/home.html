@@ -1,51 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Agora{% endblock %}</title>
+{% extends "base.html" %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-        }
+{% block title %}Home | Agora{% endblock %}
 
-        nav {
-            background: black;
-            color: white;
-            padding: 12px;
-        }
+{% block content %}
 
-        nav a {
-            color: white;
-            margin-right: 15px;
-            text-decoration: none;
-        }
+<h2 class="mb-4">Featured Products</h2>
 
-        .container {
-            padding: 20px;
-        }
+<div class="row">
 
-        .card {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            display: inline-block;
-            width: 150px;
-        }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'buyer' %}">Shop</a>
-    </nav>
-
-    <div class="container">
-        {% block content %}
-        {% endblock %}
+  <!-- Product 1 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Wireless Headphones</h5>
+        <p class="card-text">$59.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
     </div>
+  </div>
 
-</body>
-</html>
+  <!-- Product 2 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Smart Watch</h5>
+        <p class="card-text">$99.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 3 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Running Shoes</h5>
+        <p class="card-text">$79.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 4 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Backpack</h5>
+        <p class="card-text">$39.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 5 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Bluetooth Speaker</h5>
+        <p class="card-text">$49.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 6 -->
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product">
+      <div class="card-body">
+        <h5 class="card-title">Sunglasses</h5>
+        <p class="card-text">$19.99</p>
+        <button class="btn btn-dark w-100">View</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
