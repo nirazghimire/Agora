@@ -14,11 +14,11 @@ from datetime import datetime, timezone as timezone
 
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'home/base.html')
 
 
 def buyer(request):
-    return render(request,'buyer.html')
+    return render(request,'templates/buyer/buyer.html')
 
 
 def signup_page(request):
@@ -32,7 +32,7 @@ def signup_page(request):
         )
 
         return redirect('login')
-    return render(request,'signup.html')
+    return render(request,'home/signup.html')
 
 
 def login_jwt(request):
@@ -57,13 +57,13 @@ def login_jwt(request):
             request.session['jwt_access'] = access
             request.session['jwt_refresh'] = str(refresh)
             request.session['jwt_username'] = username
-            return redirect('login_dash')
+            return redirect('home')
         #redirect to the sample_success page !
         
         messages.error(request, 'Invalid credentials.') 
         #if user login fails, the error message flashes and then renders the login page 
 
-    return render(request, 'login.html')
+    return render(request, 'home/signin.html')
 
 
 # # the ultimate goal of the func is to simulate successful login and then send the refresh and the access token to the user side in a real world prod 
@@ -73,7 +73,7 @@ def dash_jwt(request):
     access = request.session.get('jwt_access')
 
     if not access:
-        return redirect('login_jwt')
+        return redirect('login')
 
     """
     For a proper implementation, you would now verify the JWT access token and the user's permissions.
@@ -87,10 +87,10 @@ def dash_jwt(request):
         user = User.objects.get(id=user_id)
     except (TokenError, InvalidToken):
         messages.error(request, 'Access token has expired or is invalid.')
-        return redirect('login_jwt')
+        return redirect('login')
     except Exception:
         messages.error(request, 'Could not validate token.')
-        return redirect('login_jwt')
+        return redirect('login')
 
     #Decode payload without verifying (just for display)
     payload_b64 = access.split('.')[1]
@@ -132,4 +132,5 @@ def logout_jwt(request):
     request.session.pop('jwt_username', None)
 
     #Go to login page
-    return redirect('login_jwt')
+    return redirect('login')
+# the redirect function takes internal name set in the urls of the django
