@@ -2,6 +2,7 @@ import base64
 import json
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
@@ -17,11 +18,7 @@ def home(request):
     return render(request, 'home/base.html')
 
 
-def buyer(request):
-    return render(request,'templates/buyer/buyer.html')
-
-
-def signup_page(request):
+def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -31,7 +28,7 @@ def signup_page(request):
             password=password
         )
 
-        return redirect('login')
+        return redirect('home')
     return render(request,'home/signup.html')
 
 
@@ -65,55 +62,8 @@ def login_jwt(request):
 
     return render(request, 'home/signin.html')
 
-
-# # the ultimate goal of the func is to simulate successful login and then send the refresh and the access token to the user side in a real world prod 
-
-
-def dash_jwt(request):
-    access = request.session.get('jwt_access')
-
-    if not access:
-        return redirect('login')
-
-    """
-    For a proper implementation, you would now verify the JWT access token and the user's permissions.
-    If the JWT is invalid or expired, you would redirect to login or show an error.
-    If the user does not have the right permissions, you would show an unauthorized error.
-    """
-    try:
-        validated_token = AccessToken(access)
-        user_id = validated_token['user_id']
-        User = get_user_model()
-        user = User.objects.get(id=user_id)
-    except (TokenError, InvalidToken):
-        messages.error(request, 'Access token has expired or is invalid.')
-        return redirect('login')
-    except Exception:
-        messages.error(request, 'Could not validate token.')
-        return redirect('login')
-
-    #Decode payload without verifying (just for display)
-    payload_b64 = access.split('.')[1]
-    #Pad base64 if needed
-    padding = (4 - len(payload_b64) % 4) % 4
-    payload = json.loads(base64.b64decode(payload_b64 + ('=' * padding)))
-
-    exp_dt = datetime.fromtimestamp(payload['exp'], tz=timezone.utc)
-    iat_dt = datetime.fromtimestamp(payload['iat'], tz=timezone.utc)
-    minutes_remaining = max(0, int((exp_dt - datetime.now(tz=timezone.utc)).total_seconds() // 60))
-
-    return render(request, 'login_dash.html', {
-        'username': user.username,
-        'access_token': access,
-        'refresh_token': request.session.get('jwt_refresh'),
-        'payload': json.dumps(payload, indent=2),
-        'exp': exp_dt.strftime('%Y-%m-%d %H:%M:%S UTC'),
-        'iat': iat_dt.strftime('%Y-%m-%d %H:%M:%S UTC'),
-        'minutes_remaining': minutes_remaining,
-        'header': f'Authorization: Bearer {access}',
-    })
-
-
+#the decorator restricts the logout to POST and does not trigger on GET
+@require_POST
 def logout_jwt(request):
     # Clear Django auth session
     auth_logout(request)
@@ -132,5 +82,5 @@ def logout_jwt(request):
     request.session.pop('jwt_username', None)
 
     #Go to login page
-    return redirect('login')
+    return redirect('home')
 # the redirect function takes internal name set in the urls of the django

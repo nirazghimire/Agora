@@ -59,6 +59,29 @@
 
           <!-- Desktop actions -->
           <div class="navbar__actions">
+            {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+              {% csrf_token %}
+              <button type="submit" class="nav-btn" id="signout-btn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Sign out
+              </button>
+            </form>
+            {% else %}
             <a href="{% url 'login' %}" class="nav-btn" id="signin-btn">
               <svg
                 width="16"
@@ -76,6 +99,7 @@
               </svg>
               Sign in
             </a>
+            {% endif %}
 
             <!-- Cart -->
             <button class="nav-btn nav-btn--cart" aria-label="View cart">
@@ -100,17 +124,6 @@
             </button>
           </div>
 
-          <!-- Hamburger -->
-          <button
-            class="navbar__hamburger"
-            aria-label="Toggle menu"
-            aria-expanded="false"
-          >
-            <span></span><span></span><span></span>
-          </button>
-        </div>
-        <!-- /.navbar__inner -->
-
         <!-- Mobile drawer -->
         <div class="navbar__drawer" aria-hidden="true">
           <input
@@ -119,6 +132,19 @@
             name="q"
             placeholder="Search products&hellip;"
           />
+          {% if request.user.is_authenticated %}
+          <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="nav-btn nav-btn--primary"
+              style="justify-content: center; width: 100%;"
+              id="signout-btn-mobile"
+            >
+              Sign out
+            </button>
+          </form>
+          {% else %}
           <a
             href="{% url 'login' %}"
             class="nav-btn nav-btn--primary"
@@ -127,6 +153,7 @@
           >
             Sign in
           </a>
+          {% endif %}
           <button class="nav-btn" style="justify-content: center">
             Create account
           </button>
@@ -136,7 +163,7 @@
     </header>
 
     <!-- ══════════════════════════════════════════════════════════
-       DJANGO MESSAGES
+       DJANGO MESSAGES from django.contrib.messages
   ═══════════════════════════════════════════════════════════ -->
     {% if messages %}
     <div class="container messages" role="alert" aria-live="polite">
@@ -148,6 +175,7 @@
       {% endfor %}
     </div>
     {% endif %}
+
 
     <!-- ══════════════════════════════════════════════════════════
        MAIN CONTENT
