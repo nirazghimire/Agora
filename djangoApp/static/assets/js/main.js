@@ -1,246 +1,217 @@
 /**
  * MARKETPLACE — main.js
- * Handles: navbar scroll, mobile drawer, search, cart badge,
- * alert dismiss, lazy-load images, intersection observer reveals.
+ * Handles: navbar scroll, mobile drawer, product search, cart badge,
+ * alert dismiss, and add-to-cart feedback.
  */
 
-'use strict';
+"use strict";
 
-/* ── Helpers ────────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
-/* ── Navbar: scroll shadow ──────────────────────────────────── */
-(function initNavbarScroll() {
-  const navbar = $('.navbar');
+function initNavbarScroll() {
+  const navbar = $(".navbar");
   if (!navbar) return;
 
-  const toggle = () => navbar.classList.toggle('scrolled', window.scrollY > 10);
-  window.addEventListener('scroll', toggle, { passive: true });
+  const toggle = () => navbar.classList.toggle("scrolled", window.scrollY > 10);
+  window.addEventListener("scroll", toggle, { passive: true });
   toggle();
-})();
+}
 
-/* ── Navbar: mobile hamburger / drawer ──────────────────────── */
-(function initMobileNav() {
-  const hamburger = $('.navbar__hamburger');
-  const drawer    = $('.navbar__drawer');
+function initMobileNav() {
+  const hamburger = $(".navbar__hamburger");
+  const drawer = $(".navbar__drawer");
   if (!hamburger || !drawer) return;
 
   let open = false;
 
-  hamburger.addEventListener('click', () => {
+  const closeDrawer = () => {
+    open = false;
+    hamburger.classList.remove("open");
+    drawer.classList.remove("open");
+    hamburger.setAttribute("aria-expanded", "false");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+
+  hamburger.addEventListener("click", () => {
     open = !open;
-    hamburger.classList.toggle('open', open);
-    drawer.classList.toggle('open', open);
-    hamburger.setAttribute('aria-expanded', open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    hamburger.classList.toggle("open", open);
+    drawer.classList.toggle("open", open);
+    hamburger.setAttribute("aria-expanded", String(open));
+    drawer.setAttribute("aria-hidden", String(!open));
+    document.body.style.overflow = open ? "hidden" : "";
   });
 
-  // Close on outside click
-  document.addEventListener('click', (e) => {
-    if (open && !hamburger.contains(e.target) && !drawer.contains(e.target)) {
-      open = false;
-      hamburger.classList.remove('open');
-      drawer.classList.remove('open');
-      document.body.style.overflow = '';
-    }
+
+  //searching a product
+
+
+  document.addEventListener("click", (e) => {
+    if (open && !hamburger.contains(e.target) && !drawer.contains(e.target))
+      closeDrawer();
   });
-})();
 
-/* ── Search: expand on focus (mobile) ─────────────────────── */
-(function initSearch() {
-  const input = $('.navbar__search-input');
-  if (!input) return;
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const q = input.value.trim();
-      if (q) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('q', q);
-        // In Django this would navigate to the search results page:
-        // window.location.href = `/search/?q=${encodeURIComponent(q)}`;
-        console.log('Search:', q);
-      }
-    }
-    if (e.key === 'Escape') input.blur();
+  drawer.addEventListener("click", (e) => {
+    if (e.target.closest('a, button[type="submit"]')) closeDrawer();
   });
-})();
+}
 
-/* ── Cart badge: animate on update ─────────────────────────── */
+function initProductSearch() {
+  const searchInput = document.getElementById('product-search');
+  if (!searchInput) return;
+
+  const prod = document.querySelectorAll('.listing-card');
+  let debounceTimer;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    //important concept of debouncing
+    debounceTimer = setTimeout(() => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+
+      prod.forEach(product => {
+        const nameEl = product.querySelector('.listing-card__name');
+        const descEl = product.querySelector('.listing-card__desc');
+        if (!nameEl) return;
+
+        if (searchTerm.length > 0 && searchTerm.length < 3) {
+          product.style.display = 'block';
+          return;
+        }
+
+        if (searchTerm.length === 0) {
+          product.style.display = 'block';
+          return;
+        }
+
+        const productName = nameEl.textContent.toLowerCase();
+        const productDesc = descEl ? descEl.textContent.toLowerCase() : '';
+
+        if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
+          product.style.display = 'block';
+        } else {
+          product.style.display = 'none';
+        }
+      });
+    }, 300);
+  });
+}
+
 const Cart = {
   badge: null,
 
   init() {
-    this.badge = $('.cart-badge');
+    this.badge = $(".cart-badge");
     this.updateCount();
   },
 
   getCount() {
     try {
-      return parseInt(sessionStorage.getItem('cart_count') || '0', 10);
-    } catch { return 0; }
+      return parseInt(sessionStorage.getItem("cart_count") || "0", 10);
+    } catch {
+      return 0;
+    }
   },
 
   setCount(n) {
-    try { sessionStorage.setItem('cart_count', String(n)); } catch {}
+    try {
+      sessionStorage.setItem("cart_count", String(n));
+    } catch {
+      // Ignore storage errors (private mode / disabled storage)
+    }
     this.updateCount();
   },
 
   updateCount() {
     if (!this.badge) return;
     const n = this.getCount();
-    this.badge.textContent = n > 99 ? '99+' : n;
+    this.badge.textContent = n > 99 ? "99+" : n;
     this.badge.hidden = n === 0;
   },
 
   bump() {
     this.setCount(this.getCount() + 1);
     if (!this.badge) return;
-    this.badge.classList.remove('pop');
-    void this.badge.offsetWidth; // reflow
-    this.badge.classList.add('pop');
-  }
+    this.badge.classList.remove("pop");
+    void this.badge.offsetWidth;
+    this.badge.classList.add("pop");
+  },
 };
 
-/* ── Alert / message dismiss ────────────────────────────────── */
-(function initAlerts() {
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.alert__close');
+function initAlerts() {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".alert__close");
     if (!btn) return;
-    const alert = btn.closest('.alert');
+    const alert = btn.closest(".alert");
     if (!alert) return;
-    alert.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-    alert.style.opacity = '0';
-    alert.style.transform = 'translateX(8px)';
+    alert.classList.add("alert--leaving");
     setTimeout(() => alert.remove(), 220);
   });
 
-  // Auto-dismiss success alerts after 5 s
-  $$('.alert--success').forEach((el) => {
+  $$(".alert--success").forEach((el) => {
     setTimeout(() => {
       if (!el.isConnected) return;
-      el.style.transition = 'opacity 0.5s ease';
-      el.style.opacity = '0';
+      el.classList.add("alert--fading");
       setTimeout(() => el.remove(), 520);
     }, 5000);
   });
-})();
+}
 
-/* ── "Add to cart" buttons ──────────────────────────────────── */
-(function initAddToCart() {
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-add-to-cart]');
+function initAddToCart() {
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-add-to-cart]");
     if (!btn) return;
+    
+    e.preventDefault();
 
-    // Visual feedback
-    const original = btn.innerHTML;
-    btn.innerHTML = '✓ Added';
-    btn.style.background = 'var(--clr-success)';
+    const form = btn.closest("form");
+    if (form) {
+      try {
+        await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form)
+        });
+      } catch (err) {
+        console.error("Cart Request Failed:", err);
+      }
+    }
+
+    if (!btn.dataset.defaultLabel) {
+      btn.dataset.defaultLabel = btn.innerHTML;
+    }
+
+    btn.innerHTML = "Added";
+    btn.classList.add("is-adding");
     btn.disabled = true;
 
     setTimeout(() => {
-      btn.innerHTML = original;
-      btn.style.background = '';
+      btn.innerHTML = btn.dataset.defaultLabel || "Add to Cart";
+      btn.classList.remove("is-adding");
       btn.disabled = false;
     }, 1800);
 
     Cart.bump();
   });
-})();
+}
 
-/* ── Intersection Observer: fade-up reveals ─────────────────── */
-(function initReveal() {
-  const els = $$('[data-reveal]');
-  if (!els.length) return;
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('fade-up');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  els.forEach((el) => io.observe(el));
-})();
-
-/* ── Category pills: active toggle ─────────────────────────── */
-(function initCategoryPills() {
-  const container = $('.categories');
-  if (!container) return;
-
-  container.addEventListener('click', (e) => {
-    const pill = e.target.closest('.category-pill');
-    if (!pill) return;
-    $$('.category-pill', container).forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-  });
-})();
-
-/* ── Lazy-load images ───────────────────────────────────────── */
-(function initLazyImages() {
-  if (!('IntersectionObserver' in window)) return;
-
-  const io = new IntersectionObserver((entries, obs) => {
-    entries.forEach(({ isIntersecting, target }) => {
-      if (!isIntersecting) return;
-      const src = target.dataset.src;
-      if (src) {
-        target.src = src;
-        target.removeAttribute('data-src');
-      }
-      obs.unobserve(target);
-    });
-  }, { rootMargin: '200px' });
-
-  $$('img[data-src]').forEach(img => io.observe(img));
-})();
-
-/* ── Tooltip: simple title-based ───────────────────────────── */
-(function initTooltips() {
-  let tip = null;
-
-  const show = (el, text) => {
-    tip = document.createElement('div');
-    tip.className = 'tooltip';
-    tip.textContent = text;
-    Object.assign(tip.style, {
-      position: 'fixed',
-      background: 'var(--clr-nav-bg)',
-      color: 'var(--clr-nav-text)',
-      fontSize: '0.75rem',
-      padding: '4px 10px',
-      borderRadius: '4px',
-      pointerEvents: 'none',
-      zIndex: '9999',
-      whiteSpace: 'nowrap',
-      boxShadow: '0 2px 8px rgba(0,0,0,.25)',
-    });
-    document.body.appendChild(tip);
-
-    const r = el.getBoundingClientRect();
-    tip.style.left = `${r.left + r.width / 2 - tip.offsetWidth / 2}px`;
-    tip.style.top  = `${r.top - tip.offsetHeight - 6}px`;
-  };
-
-  const hide = () => { tip?.remove(); tip = null; };
-
-  document.addEventListener('mouseenter', (e) => {
-    const el = e.target.closest('[data-tip]');
-    if (el) show(el, el.dataset.tip);
-  }, true);
-
-  document.addEventListener('mouseleave', (e) => {
-    if (e.target.closest('[data-tip]')) hide();
-  }, true);
-})();
-
-/* ── Initialise ─────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+  initNavbarScroll();
+  initMobileNav();
+  initProductSearch();
+  initAlerts();
+  initAddToCart();
   Cart.init();
+  
+  const signoutBtn = document.getElementById("signout-btn");
+  const signoutMobileBtn = document.getElementById("signout-btn-mobile");
+  
+  if (signoutBtn) {
+    signoutBtn.addEventListener("click", () => sessionStorage.clear());
+  }
+  if (signoutMobileBtn) {
+    signoutMobileBtn.addEventListener("click", () => sessionStorage.clear());
+  }
 });
 
-/* Export for inline use in templates */
 window.MarketCart = Cart;

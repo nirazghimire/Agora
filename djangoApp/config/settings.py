@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts.apps.accountsConfig',
     'users.apps.usersConfig',
-    'listings.apps.listingsConfig'
+    'listings.apps.listingsConfig',
+    'orders.apps.OrdersConfig'
 ]
 
 # Use the custom user model defined in users/models.py
@@ -128,13 +129,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/assets/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static/assets')
+    os.path.join(BASE_DIR, 'static')
 ]
 
 
@@ -142,4 +143,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/'media'
-#configuration for media uploads ; 
+
+LOGIN_URL = 'login'

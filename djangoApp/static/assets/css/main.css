@@ -536,6 +536,7 @@ p {
   color: var(--clr-muted);
   margin-bottom: 0.85rem;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -1149,4 +1150,377 @@ p {
     margin-left: 0;
     width: 100%;
   }
+}
+
+/* ── Navbar additions ───────────────────────────────────────── */
+.prod-status {
+  min-height: 1.25rem;
+  margin-top: 0.35rem;
+  margin-left: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--clr-nav-muted);
+}
+
+.nav-form {
+  margin: 0;
+}
+
+.nav-btn--mobile {
+  justify-content: center;
+  text-decoration: none;
+}
+
+.nav-btn--full {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .prod-status {
+    display: none;
+  }
+}
+
+/* ── Listing page ───────────────────────────────────────────── */
+.listing-page {
+  padding-block: 40px;
+}
+
+.listing-page__title {
+  margin-bottom: 32px;
+  font-size: 2rem;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px;
+}
+
+@media (min-width: 600px) {
+  .listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .listing-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .listing-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.listing-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 16px rgba(0, 0, 0, 0.06);
+}
+
+.listing-card__media {
+  aspect-ratio: 1;
+  background: #fafafa;
+  width: 100%;
+  max-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #eee;
+}
+
+.listing-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.listing-card__no-image {
+  color: #999;
+}
+
+.listing-card__body {
+  padding: 20px;
+}
+
+.listing-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 0.75rem;
+}
+
+.listing-card__name {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #111;
+  font-weight: 600;
+}
+
+.listing-card__price {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #111;
+  white-space: nowrap;
+}
+
+.listing-card__seller {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.listing-card__desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.listing-card__seller-name {
+  color: #333;
+}
+
+.listing-card__status-wrap {
+  margin-bottom: 2px;
+}
+
+.listing-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.listing-status--approved {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.listing-status--pending {
+  background: #fef7e0;
+  color: #b06000;
+}
+
+.listing-card__add-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.listing-card__add-btn:hover {
+  background: #222;
+}
+
+.listing-card__add-btn.is-adding {
+  background: var(--clr-success);
+  color: #fff;
+}
+
+.listing-empty-state {
+  text-align: center;
+  padding: 100px 0;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px dashed #ddd;
+}
+
+.listing-empty-state__icon {
+  margin-bottom: 16px;
+}
+
+.listing-empty-state__text {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* ── Create listing page ────────────────────────────────────── */
+.create-listing-page {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.create-listing-page__title {
+  margin-bottom: 24px;
+}
+
+.create-listing-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.create-listing-form__label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.create-listing-form__input {
+  border-radius: var(--radius-sm);
+}
+
+.create-listing-form__help {
+  color: #666;
+}
+
+.create-listing-form__submit {
+  margin-top: 16px;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: #333;
+  color: #fff;
+  font-weight: 600;
+}
+
+.create-listing-form__submit:hover {
+  background: #222;
+}
+
+/* ── Profile page overrides ─────────────────────────────────── */
+.profile-page {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.profile-page__header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.profile-page__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--clr-accent-lt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 3px solid var(--clr-border);
+}
+
+.profile-page__avatar-letter {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+}
+
+.profile-page__name {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-page__username {
+  color: var(--clr-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-page__edit {
+  margin-left: auto;
+}
+
+.profile-page__details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.profile-page__detail-card {
+  padding: 1.25rem;
+}
+
+.profile-page__detail-title {
+  margin-bottom: 0.75rem;
+  color: var(--clr-accent);
+}
+
+.profile-page__detail-text {
+  font-size: 0.9rem;
+  max-width: none;
+}
+
+.profile-page__detail-text--compact {
+  margin-bottom: 0.35rem;
+}
+
+.profile-page__seller-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ── Profile edit page ──────────────────────────────────────── */
+.profile-edit-card {
+  max-width: 520px;
+}
+
+.profile-edit-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.profile-edit-actions__cancel {
+  flex-shrink: 0;
+}
+
+.form-error {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Alert transition states ────────────────────────────────── */
+.alert--leaving {
+  opacity: 0;
+  transform: translateX(8px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.alert--fading {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }

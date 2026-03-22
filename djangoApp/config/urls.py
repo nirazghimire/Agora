@@ -26,7 +26,8 @@ urlpatterns = [
     path('',views.home,name="home"),
     path('',include('accounts.urls')),
     path('',include('users.urls')),    
-    path('listings/',include('listings.urls')),
+    path('',include('listings.urls')),
+    path('',include('orders.urls')),
 ]
 
 if settings.DEBUG:
