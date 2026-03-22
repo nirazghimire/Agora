@@ -1,0 +1,180 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+{% block meta_description %}Discover thousands of unique products from independent sellers. Shop handmade, vintage, and creative goods.{% endblock %}
+
+{% block content %}
+
+  <!-- ══════════════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner fade-up">
+
+        <span class="hero__tag">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          New arrivals every day
+        </span>
+
+        <h1>Find something<br />you'll <em>love</em></h1>
+
+        <p>
+          Browse thousands of unique items from independent makers and
+          vintage collectors — all in one place.
+        </p>
+
+        <div class="hero__cta">
+          <button class="btn btn--primary btn--lg">Shop now</button>
+          <button class="btn btn--ghost btn--lg" style="color: var(--clr-nav-muted);">Sell with us</button>
+        </div>
+
+        <div class="hero__stats">
+          <div>
+            <div class="hero__stat-value">12k+</div>
+            <div class="hero__stat-label">Products</div>
+          </div>
+          <div>
+            <div class="hero__stat-value">3.4k</div>
+            <div class="hero__stat-label">Sellers</div>
+          </div>
+          <div>
+            <div class="hero__stat-value">98%</div>
+            <div class="hero__stat-label">Happy buyers</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CATEGORIES
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="section" style="padding-bottom: 0;">
+    <div class="container">
+      <div class="section__header" data-reveal>
+        <div>
+          <p class="section__eyebrow">Browse</p>
+          <h2>Shop by category</h2>
+        </div>
+      </div>
+
+      <div class="categories" data-reveal>
+        <button class="category-pill active">All</button>
+        <button class="category-pill">Handmade</button>
+        <button class="category-pill">Vintage</button>
+        <button class="category-pill">Jewellery</button>
+        <button class="category-pill">Home &amp; Living</button>
+        <button class="category-pill">Art &amp; Collectibles</button>
+        <button class="category-pill">Clothing</button>
+        <button class="category-pill">Books</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FEATURED PRODUCTS
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section__header" data-reveal>
+        <div>
+          <p class="section__eyebrow">Hand-picked</p>
+          <h2>Featured products</h2>
+        </div>
+        <button class="btn btn--secondary">View all</button>
+      </div>
+
+      <div class="grid-4" data-reveal>
+        <!-- 4 skeleton product cards -->
+        {% for i in "1234" %}
+          <article class="card">
+            <div class="card__img skeleton"></div>
+            <div class="card__body">
+              <p class="skeleton" style="width:45%;height:11px;margin-bottom:.5rem;border-radius:4px;"></p>
+              <p class="skeleton" style="height:18px;margin-bottom:.35rem;border-radius:4px;"></p>
+              <p class="skeleton" style="height:13px;width:80%;margin-bottom:.25rem;border-radius:4px;"></p>
+              <p class="skeleton" style="height:13px;width:60%;margin-bottom:.85rem;border-radius:4px;"></p>
+              <div class="card__footer">
+                <span class="skeleton" style="width:56px;height:22px;display:block;border-radius:4px;"></span>
+                <button class="btn btn--primary btn--sm" disabled>+ Cart</button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PROMO BANNER
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="section" style="padding-block: 1rem 3rem;" data-reveal>
+    <div class="container">
+      <div style="
+        background: var(--clr-accent);
+        border-radius: var(--radius-lg);
+        padding: clamp(1.5rem, 4vw, 3rem);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      ">
+        <div>
+          <p class="section__eyebrow" style="color: rgba(255,255,255,.7);">Limited time</p>
+          <h2 style="color:#fff; font-size: clamp(1.4rem,3vw,2rem);">
+            Free shipping on orders over $50
+          </h2>
+          <p style="color: rgba(255,255,255,.75); max-width: 40ch;">
+            Shop from thousands of independent sellers and get your order delivered for free.
+          </p>
+        </div>
+        <button class="btn btn--secondary btn--lg"
+                style="background:#fff; color: var(--clr-accent); flex-shrink:0;">
+          Shop the sale
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NEW ARRIVALS
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section__header" data-reveal>
+        <div>
+          <p class="section__eyebrow">Just landed</p>
+          <h2>New arrivals</h2>
+        </div>
+        <button class="btn btn--secondary">See all new</button>
+      </div>
+
+      <div class="grid-3" data-reveal>
+        <!-- 3 skeleton new-arrival cards -->
+        {% for i in "123" %}
+          <article class="card">
+            <div class="card__img skeleton"></div>
+            <div class="card__body">
+              <p class="skeleton" style="height:11px;width:38%;margin-bottom:.5rem;border-radius:4px;"></p>
+              <p class="skeleton" style="height:18px;margin-bottom:.25rem;border-radius:4px;"></p>
+              <p class="skeleton" style="height:18px;width:70%;margin-bottom:.85rem;border-radius:4px;"></p>
+              <div class="card__footer">
+                <span class="skeleton" style="width:56px;height:22px;display:block;border-radius:4px;"></span>
+                <span class="skeleton" style="width:44px;height:22px;display:block;border-radius:12px;"></span>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+{% endblock %}

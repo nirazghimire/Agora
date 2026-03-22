@@ -14,7 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,8 +26,8 @@ router.register(r'products', views.ProductViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),         # name is for the internal use by django itself; 
+    path('',include('src.urls')),
     path('buyer/',views.buyer,name='buyer'),
-    path('login/',views.login,name='login'),
     path('api/',include(router.urls)),
     path('seller/',views.seller,name='seller'),
     path('seller/add-product/',views.create_product,name='create_product'),
