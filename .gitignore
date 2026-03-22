@@ -1,0 +1,15 @@
+# SQLite Database
+db.sqlite3
+*.sqlite3
+db.sqlite3-journal
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store
+
+# Media Uploads (so user images aren't uploaded to github)
+media/
