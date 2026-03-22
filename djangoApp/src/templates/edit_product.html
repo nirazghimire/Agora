@@ -1,0 +1,22 @@
+{% extends "home.html" %}
+
+{% block title %}Add/Edit Product{% endblock %}
+
+{% block content %}
+
+<h2>Product Form</h2>
+
+<div class="card">
+    <!-- Notice the form doesn't need an action URL if it's posting to the same page! -->
+    <form method="POST" enctype="multipart/form-data">
+        <!-- CRITICAL: Django requires this token for security on any POST form -->
+        {% csrf_token %} 
+        
+        <!-- This single line renders all your inputs based on models.py! -->
+        {{ form.as_p }} 
+        
+        <button type="submit">Save Product</button>
+    </form>
+</div>
+
+{% endblock %}
