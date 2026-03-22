@@ -3,33 +3,54 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from rest_framework.authtoken.models import Token
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout as auth_logout, get_user_model
-from django.contrib.auth.models import User
 from datetime import datetime, timezone as timezone
 
+
+User = get_user_model()
+from listings.models import Product
 
 
 
 def home(request):
-    return render(request, 'home/base.html')
+    if request.user.is_authenticated and getattr(request.user, 'is_seller', False):
+        products = Product.objects.filter(seller=request.user).order_by('-id')
+        is_seller_view = True
+    else:
+        products = Product.objects.filter(is_approved=True).order_by('-id')
+        is_seller_view = False
+    return render(request, 'home/index.html', {'products': products, 'is_seller_view': is_seller_view})
+
 
 
 def signup(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+        role = request.POST.get('role')
+        bio = request.POST.get('bio')
+
+        if not username or not email or not password:
+            messages.error(request, 'Username, email, and password are required.')
+            return render(request, 'users/signup.html')
+
+        if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+            messages.error(request, 'Either the username or email is already taken.')
+            return render(request, 'users/signup.html')
 
         user = User.objects.create_user(
             username=username,
-            password=password
+            email=email,
+            password=password,
+            role = role,
+            bio = bio
         )
 
         return redirect('home')
-    return render(request,'home/signup.html')
+    return render(request,'users/signup.html')
 
 
 def login_jwt(request):
@@ -59,8 +80,8 @@ def login_jwt(request):
         
         messages.error(request, 'Invalid credentials.') 
         #if user login fails, the error message flashes and then renders the login page 
-
-    return render(request, 'home/signin.html')
+    #if the request is GET ; 
+    return render(request, 'users/signin.html')
 
 #the decorator restricts the logout to POST and does not trigger on GET
 @require_POST
