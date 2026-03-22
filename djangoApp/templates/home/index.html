@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="container" style="padding: 40px 0;">
-    <h2 style="margin-bottom: 32px; font-size: 2rem;">{% if is_seller_view %}My Listings{% else %}Latest Finds{% endif
-        %}</h2>
+    <h2 style="margin-bottom: 32px; font-size: 2rem;">{% if is_seller_view %}My Listings{% else %}Latest Finds{% endif %}</h2>
 
     {% if products %}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
@@ -26,8 +25,7 @@
                     <h3 style="margin: 0; font-size: 1.1rem; color: #111; font-weight: 600;">{{ product.name }}</h3>
                     <span style="font-weight: 600; font-size: 1.1rem; color: #111;">${{ product.price }}</span>
                 </div>
-                <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: #666;">by <strong style="color: #333;">{{
-                        product.seller.username }}</strong></p>
+                <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: #666;">by <strong style="color: #333;">{{ product.seller.username }}</strong></p>
 
                 {% if is_seller_view %}
                 <div style="margin-bottom: 2px;">
@@ -67,9 +65,7 @@
             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
             <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
-        <p style="color: #666; font-size: 1.1rem; margin: 0;">{% if is_seller_view %}You haven't listed any products
-            yet. Click 'Add Listing' to start!{% else %}No products available at the moment. Check back later!{% endif
-            %}</p>
+        <p style="color: #666; font-size: 1.1rem; margin: 0;">{% if is_seller_view %}You haven't listed any products yet. Click 'Add Listing' to start!{% else %}No products available at the moment. Check back later!{% endif %}</p>
     </div>
     {% endif %}
 </div>
