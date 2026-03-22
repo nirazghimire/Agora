@@ -1,0 +1,76 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <h2 style="margin-bottom: 32px; font-size: 2rem;">{% if is_seller_view %}My Listings{% else %}Latest Finds{% endif
+        %}</h2>
+
+    {% if products %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+        {% for product in products %}
+        <div style="border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 16px rgba(0,0,0,0.06)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'">
+            <div
+                style="aspect-ratio: 1; background: #fafafa; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #eee;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <span style="color: #999;">No Image</span>
+                {% endif %}
+            </div>
+            <div style="padding: 20px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: #111; font-weight: 600;">{{ product.name }}</h3>
+                    <span style="font-weight: 600; font-size: 1.1rem; color: #111;">${{ product.price }}</span>
+                </div>
+                <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: #666;">by <strong style="color: #333;">{{
+                        product.seller.username }}</strong></p>
+
+                {% if is_seller_view %}
+                <div style="margin-bottom: 2px;">
+                    {% if product.is_approved %}
+                    <span
+                        style="display: inline-block; padding: 4px 10px; font-size: 0.8rem; background: #e6f4ea; color: #137333; border-radius: 12px; font-weight: 600;">Approved</span>
+                    {% else %}
+                    <span
+                        style="display: inline-block; padding: 4px 10px; font-size: 0.8rem; background: #fef7e0; color: #b06000; border-radius: 12px; font-weight: 600;">Pending
+                        Approval</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <button class="nav-btn nav-btn--primary"
+                    style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: #111; color: white; cursor: pointer; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    Add to Cart
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div
+        style="text-align: center; padding: 100px 0; background: #fafafa; border-radius: 12px; border: 1px dashed #ddd;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
+            <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <p style="color: #666; font-size: 1.1rem; margin: 0;">{% if is_seller_view %}You haven't listed any products
+            yet. Click 'Add Listing' to start!{% else %}No products available at the moment. Check back later!{% endif
+            %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

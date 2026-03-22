@@ -1,0 +1,48 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+{% block meta_description %}Update your Agora Marketplace profile.{% endblock %}
+
+{% block content %}
+
+  <section class="signin">
+    <div class="container">
+      <div class="signin__card fade-up" style="max-width: 520px;">
+
+        <div class="signin__header">
+          <span class="navbar__logo-mark signin__icon" aria-hidden="true">A</span>
+          <h1 class="signin__title">Edit Profile</h1>
+          <p class="signin__subtitle">Update your personal information</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="signin__form" id="profile-edit-form">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="form-group">
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <p style="color: #C0392B; font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+            <button type="submit" class="btn btn--primary btn--full btn--lg" id="profile-save">
+              Save Changes
+            </button>
+            <a href="{% url 'profile' %}" class="btn btn--secondary btn--lg" style="flex-shrink: 0;">
+              Cancel
+            </a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
