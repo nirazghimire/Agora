@@ -14,10 +14,17 @@
     <h4>Currently Selling</h4>
     <ul>
         {% for product in products %}
-        <li>{{ product.title }} - {{ product.price }}
-            <a href="{% url 'edit_product' product.id %}">Edit</a>
-            <a href="{% url 'delete_product' product.id %}">Delete</a>
+        <li style="margin-bottom: 20px;">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" style="max-width: 100px; max-height: 100px; display: block; margin-bottom: 10px;">
+            {% endif %}
+            <strong>{{ product.title }}</strong> - ${{ product.price }}
+            <br>
+            <a href="{% url 'edit_product' product.id %}" style="margin-right: 15px;">Edit</a>
+            <a href="{% url 'delete_product' product.id %}" onclick="return confirm('Are you sure you want to delete {{ product.title }}?');" style="color: red;">Delete</a>
         </li>
+        {% empty %}
+        <li>You are not selling any products yet.</li>
         {% endfor %}
     </ul>
 </div>

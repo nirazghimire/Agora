@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 from src import views
 from rest_framework import routers
 
@@ -33,4 +35,4 @@ urlpatterns = [
     path('seller/edit-product/<int:product_id>/',views.edit_product,name='edit_product'),
     path('seller/delete-product/<int:product_id>/',views.delete_product,name='delete_product'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
