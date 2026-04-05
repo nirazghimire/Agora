@@ -13,6 +13,8 @@ jobs:
   # This workflow contains a single job called "build"
   test:
     runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: tests.test_settings #instruct the runner to use instead of config.settings
     defaults:
       run:
         working-directory: ./djangoApp #setting the current directory as djangoApp
@@ -30,4 +32,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: execute all the tests
-        run: python3 manage.py test --settings=tests.test_settings
+        run: python3 manage.py test
