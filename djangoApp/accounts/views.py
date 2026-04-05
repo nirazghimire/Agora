@@ -92,6 +92,11 @@ def login_jwt(request):
                 messages.error(request, 'Your account has been banned. Please contact support.')
                 return render(request, 'users/signin.html')
             
+            # Check if user is approved (is_approved = False implies pending admin approval)
+            if not user.is_approved and not user.is_superuser and getattr(user, 'role', '') != 'admin':
+                messages.error(request, 'Your account is pending admin approval. Please wait until an admin approves your registration.')
+                return render(request, 'users/signin.html')
+            
             # Establish Django session authentication
             login(request, user)
             refresh = RefreshToken.for_user(user)

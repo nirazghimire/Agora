@@ -22,8 +22,12 @@
     <div class="number">{{ stats.approved_products }}</div>
   </div>
   <div class="stat-card warning">
-    <h3>Pending Approval</h3>
+    <h3>Pending Products</h3>
     <div class="number">{{ stats.pending_products }}</div>
+  </div>
+  <div class="stat-card warning">
+    <h3>Pending Users</h3>
+    <div class="number">{{ stats.pending_users }}</div>
   </div>
   <div class="stat-card warning">
     <h3>Banned Users</h3>
@@ -97,10 +101,77 @@
   {% endif %}
 </div>
 
+<!-- Recent Pending Users -->
+<div class="content-card">
+  <h3>Recent Pending Users</h3>
+  {% if recent_pending_users %}
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Joined</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in recent_pending_users %}
+      <tr>
+        <td><strong>{{ user.username }}</strong></td>
+        <td><span style="text-transform: capitalize;">{{ user.role }}</span></td>
+        <td>{{ user.created_at|date:"M d, Y" }}</td>
+        <td>
+          <div class="button-group">
+            <form
+              method="post"
+              action="{% url 'approve_user' user.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success btn-sm">
+                Approve
+              </button>
+            </form>
+            <form
+              method="post"
+              action="{% url 'reject_user' user.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure?');"
+              >
+                Reject
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a
+    href="{% url 'pending_users' %}"
+    class="btn btn-primary"
+    style="margin-top: 15px"
+    >View All Pending Users →</a
+  >
+  {% else %}
+  <div class="empty-message">
+    <p>No pending users.</p>
+  </div>
+  {% endif %}
+</div>
+
 <!-- Quick Actions -->
 <div class="content-card">
   <h3>Quick Actions</h3>
   <div class="button-group" style="margin-top: 15px">
+    <a href="{% url 'pending_users' %}" class="btn btn-warning"
+      >Review Pending Users</a
+    >
     <a href="{% url 'manage_sellers' %}" class="btn btn-primary"
       >Manage Sellers</a
     >

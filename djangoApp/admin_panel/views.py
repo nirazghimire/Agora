@@ -18,15 +18,18 @@ def admin_dashboard(request):
         'total_products': Product.objects.count(),
         'approved_products': Product.objects.filter(is_approved=True).count(),
         'pending_products': Product.objects.filter(is_approved=False).count(),
+        'pending_users': User.objects.filter(is_approved=False, role__in=['buyer', 'seller']).count(),
         'banned_users': User.objects.filter(is_active=False, role__in=['buyer', 'seller']).count(),
     }
     
-    # Get recent pending products
+    # Get recent pending products and users
     recent_pending = Product.objects.filter(is_approved=False).select_related('seller').order_by('-id')[:5]
+    recent_pending_users = User.objects.filter(is_approved=False, role__in=['buyer', 'seller']).order_by('-id')[:5]
     
     context = {
         'stats': stats,
         'recent_pending': recent_pending,
+        'recent_pending_users': recent_pending_users,
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
@@ -106,7 +109,7 @@ def manage_sellers(request):
     """
     View and manage all sellers
     """
-    sellers = User.objects.filter(role='seller').select_related('seller_profile').order_by('-id')
+    sellers = User.objects.filter(role='seller', is_approved=True).select_related('seller_profile').order_by('-id')
     
     context = {
         'sellers': sellers,
@@ -120,7 +123,7 @@ def manage_buyers(request):
     """
     View and manage all buyers
     """
-    buyers = User.objects.filter(role='buyer').select_related('buyer_profile').order_by('-id')
+    buyers = User.objects.filter(role='buyer', is_approved=True).select_related('buyer_profile').order_by('-id')
     
     context = {
         'buyers': buyers,
@@ -162,3 +165,48 @@ def unban_user(request, user_id):
     
     next_page = request.POST.get('next', 'manage_sellers' if user.role == 'seller' else 'manage_buyers')
     return redirect(next_page)
+
+
+@admin_required
+def pending_users(request):
+    """
+    View all pending users waiting for admin approval
+    """
+    pending_users = User.objects.filter(is_approved=False, role__in=['buyer', 'seller']).order_by('-id')
+    
+    context = {
+        'pending_users': pending_users,
+        'page_title': 'Pending Users',
+    }
+    return render(request, 'admin_panel/pending_users.html', context)
+
+
+@admin_required
+@require_http_methods(["POST"])
+def approve_user(request, user_id):
+    """
+    Approve a pending user
+    """
+    user = get_object_or_404(User, id=user_id, role__in=['buyer', 'seller'])
+    user.is_approved = True
+    user.save()
+    
+    user_type = 'Seller' if user.role == 'seller' else 'Buyer'
+    messages.success(request, f"{user_type} '{user.username}' has been approved.")
+    return redirect('pending_users')
+
+
+@admin_required
+@require_http_methods(["POST"])
+def reject_user(request, user_id):
+    """
+    Reject and delete a pending user
+    """
+    user = get_object_or_404(User, id=user_id, role__in=['buyer', 'seller'])
+    username = user.username
+    user_type = 'Seller' if user.role == 'seller' else 'Buyer'
+    user.delete()
+    
+    messages.success(request, f"{user_type} '{username}' has been rejected and deleted.")
+    return redirect('pending_users')
+

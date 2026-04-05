@@ -1,517 +1,85 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Admin Panel - Agora{% endblock %}</title>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap");
 
-      :root {
-        --clr-bg: #f7f5f0;
-        --clr-surface: #ffffff;
-        --clr-border: #e3ded6;
-        --clr-text: #1a1714;
-        --clr-muted: #7a736b;
-        --clr-accent: #c8622a;
-        --clr-accent-dk: #9e4a1e;
-        --clr-nav-bg: #1a1714;
-        --clr-nav-text: #f0ebe3;
-        --clr-nav-muted: #9e9890;
-      }
-
-      * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-      }
-
-      body {
-        font-family: "DM Sans", system-ui, sans-serif;
-        background-color: var(--clr-bg);
-        color: var(--clr-text);
-      }
-
-      .admin-container {
-          display: flex;
-          min-height: 100vh;
-      }
-
-      .sidebar {
-          width: 250px;
-          background-color: var(--clr-nav-bg);
-          color: var(--clr-nav-text);
-          padding: 20px;
-          position: fixed;
-          height: 100vh;
-          overflow-y: auto;
-          border-right: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .sidebar h1 {
-          font-family: "Playfair Display", Georgia, serif;
-          font-size: 1.45rem;
-          margin-bottom: 30px;
-          padding-bottom: 15px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-section {
-          display: block;
-          padding: 15px 0 10px;
-          color: var(--clr-nav-muted);
-          font-size: 12px;
-          letter-spacing: 0.08em;
-      }
-
-      .sidebar-menu {
-          list-style: none;
-      }
-
-      .sidebar-menu li {
-          margin-bottom: 10px;
-      }
-
-      .sidebar-menu a {
-          color: var(--clr-nav-text);
-          text-decoration: none;
-          display: block;
-          padding: 12px 15px;
-          border-radius: 8px;
-          transition: all 0.2s ease;
-      }
-
-      .sidebar-menu a:hover {
-          background-color: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
-      }
-
-      .sidebar-menu a.active {
-          background-color: var(--clr-accent);
-          color: white;
-      }
-
-      .main-content {
-          margin-left: 250px;
-          flex: 1;
-          padding: 24px;
-      }
-
-      .header {
-          background-color: var(--clr-surface);
-          padding: 20px;
-          border-radius: 10px;
-          border: 1px solid var(--clr-border);
-          margin-bottom: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-      }
-
-      .header h2 {
-          font-family: "Playfair Display", Georgia, serif;
-          color: var(--clr-text);
-      }
-
-      .user-info {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-      }
-
-      .user-info a {
-          color: var(--clr-accent);
-          text-decoration: none;
-      }
-
-      .user-info a:hover {
-          text-decoration: underline;
-      }
-
-        .logout-btn {
-          background: none;
-          border: 0;
-          color: var(--clr-accent);
-          cursor: pointer;
-          font: inherit;
-          padding: 0;
-        }
-
-        .logout-btn:hover {
-          color: var(--clr-accent-dk);
-        }
-
-      .content-card {
-          background-color: var(--clr-surface);
-          border-radius: 10px;
-          padding: 20px;
-          border: 1px solid var(--clr-border);
-          margin-bottom: 20px;
-      }
-
-      .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 15px;
-          margin-bottom: 30px;
-      }
-
-      .stat-card {
-          background: var(--clr-surface);
-          color: var(--clr-text);
-          padding: 20px;
-          border-radius: 10px;
-          border: 1px solid var(--clr-border);
-          border-left: 4px solid var(--clr-accent);
-          text-align: left;
-      }
-
-      .stat-card h3 {
-          font-size: 14px;
-          font-weight: normal;
-          margin-bottom: 10px;
-          opacity: 1;
-      }
-
-      .stat-card .number {
-          font-size: 32px;
-          font-weight: bold;
-      }
-
-      .stat-card.warning {
-          border-left-color: #b96f20;
-      }
-
-      .stat-card.success {
-          border-left-color: #2d7a5f;
-      }
-
-      .stat-card.info {
-          border-left-color: #6b7b8c;
-      }
-
-      table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-      }
-
-      table thead {
-          background-color: #f9f7f3;
-          border-bottom: 1px solid var(--clr-border);
-      }
-
-      table th {
-          padding: 12px;
-          text-align: left;
-          font-weight: 600;
-          color: var(--clr-text);
-      }
-
-      table td {
-          padding: 12px;
-          border-bottom: 1px solid var(--clr-border);
-      }
-
-      table tbody tr:hover {
-          background-color: #fbfaf7;
-      }
-
-      .badge {
-          display: inline-block;
-          padding: 5px 10px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-      }
-
-      .badge-success {
-          background-color: #e4f0eb;
-          color: #245743;
-      }
-
-      .badge-warning {
-          background-color: #f8eddc;
-          color: #7a5522;
-      }
-
-      .badge-danger {
-          background-color: #f8e4e5;
-          color: #7a2d32;
-      }
-
-      .badge-info {
-          background-color: #e8ecef;
-          color: #4b5c69;
-      }
-
-      .btn {
-          display: inline-block;
-          padding: 8px 16px;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          text-decoration: none;
-          border: none;
-          cursor: pointer;
-          transition: all 0.2s ease;
-      }
-
-      .btn-primary {
-          background-color: var(--clr-accent);
-          color: white;
-      }
-
-      .btn-primary:hover {
-          background-color: var(--clr-accent-dk);
-      }
-
-      .btn-success {
-          background-color: #2d7a5f;
-          color: white;
-      }
-
-      .btn-success:hover {
-          background-color: #235e49;
-      }
-
-      .btn-danger {
-          background-color: #9c3b3f;
-          color: white;
-      }
-
-      .btn-danger:hover {
-          background-color: #7f2f33;
-      }
-
-      .btn-warning {
-          background-color: #b96f20;
-          color: white;
-      }
-
-      .btn-warning:hover {
-          background-color: #975a1a;
-      }
-
-      .btn-sm {
-          padding: 5px 10px;
-          font-size: 12px;
-      }
-
-      .button-group {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-      }
-
-      .messages {
-          margin-bottom: 20px;
-      }
-
-      .message {
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 10px;
-          border-left: 4px solid;
-      }
-
-      .message.success {
-          background-color: #d4edda;
-          border-color: #28a745;
-          color: #155724;
-      }
-
-      .message.warning {
-          background-color: #fff3cd;
-          border-color: #ffc107;
-          color: #856404;
-      }
-
-      .message.error {
-          background-color: #f8d7da;
-          border-color: #dc3545;
-          color: #721c24;
-      }
-
-      .message.info {
-          background-color: #d1ecf1;
-          border-color: #17a2b8;
-          color: #0c5460;
-      }
-
-      .form-group {
-          margin-bottom: 15px;
-      }
-
-      .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: 600;
-          color: var(--clr-text);
-      }
-
-      .form-group input,
-      .form-group textarea,
-      .form-group select {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid var(--clr-border);
-          border-radius: 8px;
-          font-family: inherit;
-          font-size: 14px;
-      }
-
-      .form-group input:focus,
-      .form-group textarea:focus,
-      .form-group select:focus {
-          outline: none;
-          border-color: var(--clr-accent);
-          box-shadow: 0 0 0 3px rgba(200, 98, 42, 0.18);
-      }
-
-      .empty-message {
-          text-align: center;
-          padding: 40px 20px;
-          color: var(--clr-muted);
-      }
-
-      .empty-message p {
-          font-size: 18px;
-      }
-
-      .alert {
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-      }
-
-      .alert-info {
-          background-color: #d1ecf1;
-          border: 1px solid #bee5eb;
-          color: #0c5460;
-      }
-
-      @media (max-width: 768px) {
-          .sidebar {
-              width: 100%;
-              height: auto;
-              position: relative;
-              margin-bottom: 20px;
-          }
-
-          .main-content {
-              margin-left: 0;
-          }
-
-          .header {
-              flex-direction: column;
-              gap: 15px;
-          }
-
-          .stats-grid {
-              grid-template-columns: 1fr 1fr;
-          }
-
-          table {
-              font-size: 12px;
-          }
-
-          table th,
-          table td {
-              padding: 8px;
-          }
-      }
-
-      {% block extra_css %}{% endblock %}
-    </style>
-  </head>
-  <body>
-    <div class="admin-container">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <h1>Admin Panel</h1>
-        <ul class="sidebar-menu">
-          <li>
-            <a
-              href="{% url 'admin_dashboard' %}"
-              class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
-              >Dashboard</a
-            >
-          </li>
-
-          <li>
-            <strong class="sidebar-section">PRODUCTS</strong>
-          </li>
-          <li>
-            <a
-              href="{% url 'pending_products' %}"
-              class="{% if request.resolver_match.url_name == 'pending_products' %}active{% endif %}"
-              >Pending Approval</a
-            >
-          </li>
-          <li>
-            <a
-              href="{% url 'approved_products' %}"
-              class="{% if request.resolver_match.url_name == 'approved_products' %}active{% endif %}"
-              >Approved</a
-            >
-          </li>
-
-          <li>
-            <strong class="sidebar-section">USERS</strong>
-          </li>
-          <li>
-            <a
-              href="{% url 'manage_sellers' %}"
-              class="{% if request.resolver_match.url_name == 'manage_sellers' %}active{% endif %}"
-              >Manage Sellers</a
-            >
-          </li>
-          <li>
-            <a
-              href="{% url 'manage_buyers' %}"
-              class="{% if request.resolver_match.url_name == 'manage_buyers' %}active{% endif %}"
-              >Manage Buyers</a
-            >
-          </li>
-        </ul>
-      </aside>
-
-      <!-- Main Content -->
-      <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-          <h2>{% block page_title %}Admin Panel{% endblock %}</h2>
-          <div class="user-info">
-            <span>Welcome, <strong>{{ request.user.username }}</strong></span>
-            <form
-              method="post"
-              action="{% url 'logout' %}"
-              style="margin: 0; display: inline"
-            >
-              {% csrf_token %}
-              <button type="submit" class="logout-btn">Logout</button>
-            </form>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin Panel - Agora{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'assets/css/admin.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h1>Admin Panel</h1>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="{% url 'admin_dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+        </li>
+
+        <li>
+          <strong class="sidebar-section">PRODUCTS</strong>
+        </li>
+        <li>
+          <a href="{% url 'pending_products' %}"
+            class="{% if request.resolver_match.url_name == 'pending_products' %}active{% endif %}">Pending Approval</a>
+        </li>
+        <li>
+          <a href="{% url 'approved_products' %}"
+            class="{% if request.resolver_match.url_name == 'approved_products' %}active{% endif %}">Approved</a>
+        </li>
+
+        <li>
+          <strong class="sidebar-section">USERS</strong>
+        </li>
+        <li>
+          <a href="{% url 'pending_users' %}"
+            class="{% if request.resolver_match.url_name == 'pending_users' %}active{% endif %}">Pending Users</a>
+        </li>
+        <li>
+          <a href="{% url 'manage_sellers' %}"
+            class="{% if request.resolver_match.url_name == 'manage_sellers' %}active{% endif %}">Manage Sellers</a>
+        </li>
+        <li>
+          <a href="{% url 'manage_buyers' %}"
+            class="{% if request.resolver_match.url_name == 'manage_buyers' %}active{% endif %}">Manage Buyers</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <h2>{% block page_title %}Admin Panel{% endblock %}</h2>
+        <div class="user-info">
+          <span>Welcome, <strong>{{ request.user.username }}</strong></span>
+          <form method="post" action="{% url 'logout' %}" style="margin: 0; display: inline">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
         </div>
-
-        <!-- Messages -->
-        {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-          <div
-            class="message {% if message.tags %}{{ message.tags }}{% endif %}"
-          >
-            {{ message }}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Content Block -->
-        {% block content %}{% endblock %}
       </div>
+
+      <!-- Messages -->
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Content Block -->
+      {% block content %}{% endblock %}
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
