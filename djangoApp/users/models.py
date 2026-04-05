@@ -11,6 +11,7 @@ class User(AbstractUser):
     ROLE_CHOICES = [
         ('buyer', 'Buyer'),
         ('seller', 'Seller'),
+        ('admin','Admin')
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     bio = models.TextField(max_length=500, blank=True)

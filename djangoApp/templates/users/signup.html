@@ -1,42 +1,67 @@
 {% extends "home/base.html" %}
 {% load static %}
-
 {% block title %}Sign Up{% endblock %}
 {% block meta_description %}Create your Marketplace account to discover unique products and start selling.{% endblock %}
-
 {% block content %}
 
 <section class="signin">
   <div class="container">
     <div class="signin__card fade-up">
-
       <!-- Header -->
       <div class="signin__header">
         <span class="navbar__logo-mark signin__icon" aria-hidden="true">A</span>
         <h1 class="signin__title">Create your account</h1>
-        <p class="signin__subtitle">Join Agora Marketplace and start discovering</p>
+        <p class="signin__subtitle">
+          Join Agora Marketplace and start discovering
+        </p>
       </div>
 
       <!-- Form -->
-      <form method="post" action="{% url 'sign_up' %}" class="signin__form" id="signup-form">
+      <form
+        method="post"
+        action="{% url 'sign_up' %}"
+        class="signin__form"
+        id="signup-form"
+      >
         {% csrf_token %}
 
         <div class="form-group">
           <label class="form-label" for="id_username">Username</label>
-          <input class="form-input" type="text" id="id_username" name="username" placeholder="Choose a username"
-            autocomplete="username" required />
+          <input
+            class="form-input"
+            type="text"
+            id="id_username"
+            name="username"
+            placeholder="Choose a username"
+            autocomplete="username"
+            required
+          />
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_email">Email</label>
-          <input class="form-input" type="email" id="id_email" name="email" placeholder="Enter your email"
-            autocomplete="email" required />
+          <input
+            class="form-input"
+            type="email"
+            id="id_email"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          />
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_password">Password</label>
-          <input class="form-input" type="password" id="id_password" name="password" placeholder="Create a password"
-            autocomplete="new-password" required />
+          <input
+            class="form-input"
+            type="password"
+            id="id_password"
+            name="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+            required
+          />
         </div>
 
         <div class="form-group">
@@ -50,19 +75,77 @@
 
         <div class="form-group">
           <label class="form-label" for="id_bio">Bio</label>
-          <textarea class="form-input" id="id_bio" name="bio" placeholder="Something interesting..." rows="4"></textarea>
+          <textarea
+            class="form-input"
+            id="id_bio"
+            name="bio"
+            placeholder="Something interesting..."
+            rows="4"
+          ></textarea>
         </div>
 
-        <button type="submit" class="btn btn--primary btn--full btn--lg" id="signup-submit">
+        <h3 style="margin: 18px 0 8px; font-size: 1.1rem">Address Details</h3>
+
+        <div class="form-group">
+          <label class="form-label" for="id_country">Country</label>
+          <input
+            class="form-input"
+            type="text"
+            id="id_country"
+            name="country"
+            placeholder="Country"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_state">State</label>
+          <input
+            class="form-input"
+            type="text"
+            id="id_state"
+            name="state"
+            placeholder="State"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_street">Street Address</label>
+          <input
+            class="form-input"
+            type="text"
+            id="id_street"
+            name="street"
+            placeholder="Street address"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_zip_code">Zip Code</label>
+          <input
+            class="form-input"
+            type="text"
+            id="id_zip_code"
+            name="zip_code"
+            placeholder="Zip code"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn--primary btn--full btn--lg"
+          id="signup-submit"
+        >
           Create account
         </button>
       </form>
 
       <!-- Footer -->
       <div class="signin__footer">
-        <p>Already have an account? <a href="{% url 'login' %}" class="signin__link">Sign in</a></p>
+        <p>
+          Already have an account?
+          <a href="{% url 'login' %}" class="signin__link">Sign in</a>
+        </p>
       </div>
-
     </div>
   </div>
 </section>

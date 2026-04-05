@@ -1,0 +1,93 @@
+{% extends 'admin_panel/base.html' %} {% block title %}Manage Sellers - Admin
+Panel{% endblock %} {% block page_title %}Manage Sellers{% endblock %} 
+{% block content %}
+<div class="content-card">
+  {% if sellers %}
+  <p style="margin-bottom: 20px; color: #7f8c8d">
+    <strong>{{ sellers.count }}</strong> seller(s) registered
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Store Name</th>
+        <th>Username</th>
+        <th>Total Sales</th>
+        <th>Status</th>
+        <th>Joined</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for seller in sellers %}
+      <tr>
+        <td>
+          <strong>{{ seller.seller_profile.store_name }}</strong>
+        </td>
+        <td>{{ seller.username }}</td>
+        <td>{{ seller.seller_profile.total_sales }}</td>
+        <td>
+          {% if seller.is_active %}
+          <span class="badge badge-success">Active</span>
+          {% else %}
+          <span class="badge badge-danger">Banned</span>
+          {% endif %}
+        </td>
+        <td><small>{{ seller.created_at|date:"M d, Y" }}</small></td>
+        <td>
+          <div class="button-group">
+            {% if seller.is_active %}
+            <form
+              method="post"
+              action="{% url 'ban_seller' seller.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="next" value="manage_sellers" />
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="
+                  return confirm(
+                    'Ban this seller? They will not be able to login.',
+                  );
+                "
+              >
+                Ban
+              </button>
+            </form>
+            {% else %}
+            <form
+              method="post"
+              action="{% url 'unban_seller' seller.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="next" value="manage_sellers" />
+              <button type="submit" class="btn btn-success btn-sm">
+                Unban
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-message">
+    <p>No sellers registered yet.</p>
+  </div>
+  {% endif %}
+</div>
+
+<div class="alert alert-info" style="margin-top: 20px">
+  <strong>Note:</strong> Banning a seller will:
+  <ul style="margin-top: 10px; margin-left: 20px">
+    <li>Prevent them from logging in</li>
+    <li>Hide all their products from buyers</li>
+    <li>Buyers cannot complete purchases for their products</li>
+  </ul>
+</div>
+
+{% endblock %}

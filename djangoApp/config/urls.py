@@ -28,6 +28,7 @@ urlpatterns = [
     path('',include('users.urls')),    
     path('',include('listings.urls')),
     path('',include('orders.urls')),
+    path('',include('admin_panel.urls')),
 ]
 
 if settings.DEBUG:

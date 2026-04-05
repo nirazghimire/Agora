@@ -1,0 +1,94 @@
+{% extends 'home/base.html' %} {% block title %}My Orders{% endblock %} 
+{% block content %}
+<div class="container listing-page">
+  <h2 class="listing-page__title">My Orders</h2>
+
+  {% if orders %}
+  <div style="display: grid; gap: 16px">
+    {% for order in orders %}
+    <div class="card" style="padding: 18px; border-radius: 12px">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-bottom: 12px;
+        "
+      >
+        <h3 style="font-size: 1.1rem; margin: 0">Order #{{ order.id }}</h3>
+        <span style="color: #666; font-size: 0.9rem"
+          >{{ order.created_at|date:'M d, Y' }}</span
+        >
+      </div>
+
+      <p style="margin: 0 0 12px; color: #444">
+        Total: <strong>${{ order.total }}</strong>
+      </p>
+
+      <div style="display: grid; gap: 10px">
+        {% for item in order.items.all %}
+        <div
+          style="
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fff;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              gap: 8px;
+              flex-wrap: wrap;
+              margin-bottom: 8px;
+            "
+          >
+            <strong>{{ item.product_name }}</strong>
+            <span>${{ item.unit_price }} x {{ item.quantity }}</span>
+          </div>
+
+          {% if item.return_request %}
+          <p style="margin: 0; font-size: 0.9rem; color: #666">
+            Return Status:
+            <strong>{{ item.return_request.get_status_display }}</strong>
+          </p>
+          {% else %}
+          <form
+            method="post"
+            action="{% url 'initiate_return' item.id %}"
+            style="display: grid; gap: 8px"
+          >
+            {% csrf_token %}
+            <label class="form-label" for="return-reason-{{ item.id }}"
+              >Reason for return</label
+            >
+            <textarea
+              id="return-reason-{{ item.id }}"
+              name="reason"
+              class="form-input"
+              rows="3"
+              placeholder="Tell us why you want to return this item"
+              required
+            ></textarea>
+            <div>
+              <button type="submit" class="btn btn--primary">
+                Initiate Return
+              </button>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="listing-empty-state">
+    <p class="listing-empty-state__text">You have not placed any orders yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

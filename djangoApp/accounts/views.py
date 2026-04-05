@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout as auth_logout, get_user_model
 from datetime import datetime, timezone as timezone
+from users.models import Address
 
 
 User = get_user_model()
@@ -15,11 +16,15 @@ from listings.models import Product
 
 
 def home(request):
+    if request.user.is_authenticated and getattr(request.user, 'role', '') == 'admin':
+        return redirect('admin_dashboard')
+
     if request.user.is_authenticated and getattr(request.user, 'is_seller', False):
         products = Product.objects.filter(seller=request.user).order_by('-id')
         is_seller_view = True
     else:
-        products = Product.objects.filter(is_approved=True).order_by('-id')
+        # Only show products from active sellers that are approved
+        products = Product.objects.filter(is_approved=True, seller__is_active=True).order_by('-id')
         is_seller_view = False
     return render(request, 'home/index.html', {'products': products, 'is_seller_view': is_seller_view})
 
@@ -32,9 +37,21 @@ def signup(request):
         password = request.POST.get('password', '')
         role = request.POST.get('role')
         bio = request.POST.get('bio')
+        country = request.POST.get('country', '').strip()
+        state = request.POST.get('state', '').strip()
+        street = request.POST.get('street', '').strip()
+        zip_code = request.POST.get('zip_code', '').strip()
 
         if not username or not email or not password:
             messages.error(request, 'Username, email, and password are required.')
+            return render(request, 'users/signup.html')
+
+        if role == 'buyer' and (not country or not state or not street or not zip_code):
+            messages.error(request, 'Address details are required for buyer accounts.')
+            return render(request, 'users/signup.html')
+
+        if zip_code and not zip_code.isdigit():
+            messages.error(request, 'Zip code must contain digits only.')
             return render(request, 'users/signup.html')
 
         if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
@@ -49,6 +66,15 @@ def signup(request):
             bio = bio
         )
 
+        if country and state and street and zip_code:
+            Address.objects.create(
+                user=user,
+                country=country,
+                state=state,
+                street=street,
+                zip_code=int(zip_code),
+            )
+
         return redirect('home')
     return render(request,'users/signup.html')
 
@@ -61,6 +87,11 @@ def login_jwt(request):
         # how does authenticate work ??
 
         if user:
+            # Check if user is banned (is_active = False)
+            if not user.is_active:
+                messages.error(request, 'Your account has been banned. Please contact support.')
+                return render(request, 'users/signin.html')
+            
             # Establish Django session authentication
             login(request, user)
             refresh = RefreshToken.for_user(user)
@@ -75,6 +106,9 @@ def login_jwt(request):
             request.session['jwt_access'] = access
             request.session['jwt_refresh'] = str(refresh)
             request.session['jwt_username'] = username
+
+            if getattr(user, 'role', '') == 'admin':
+                return redirect('admin_dashboard')
             return redirect('home')
         #redirect to the sample_success page !
         
@@ -86,6 +120,13 @@ def login_jwt(request):
 #the decorator restricts the logout to POST and does not trigger on GET
 @require_POST
 def logout_jwt(request):
+    # Reset cart contents on logout so next login starts with an empty cart.
+    if request.user.is_authenticated:
+        try:
+            request.user.cart.items.all().delete()
+        except Exception:
+            pass
+
     # Clear Django auth session
     auth_logout(request)
 

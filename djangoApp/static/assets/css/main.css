@@ -1342,6 +1342,23 @@ p {
   color: #fff;
 }
 
+/* Keep cart interactions stable without card movement. */
+.cart-grid .listing-card {
+  transition: box-shadow 0.2s ease;
+}
+
+.cart-grid .listing-card:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.cart-item__quantity {
+  display: inline-block;
+  min-width: 11ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .listing-empty-state {
   text-align: center;
   padding: 100px 0;

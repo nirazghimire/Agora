@@ -1,0 +1,80 @@
+{% extends 'home/base.html' %} {% block title %}Sold Products{% endblock %} {%block content %}
+<div class="container listing-page">
+  <h2 class="listing-page__title">Sold Products</h2>
+
+  {% if sold_items %}
+  <div style="display: grid; gap: 14px">
+    {% for item in sold_items %}
+    <div class="card" style="padding: 16px; border-radius: 12px">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 10px;
+        "
+      >
+        <h3 style="margin: 0; font-size: 1.05rem">{{ item.product_name }}</h3>
+        <span style="color: #666">Order #{{ item.order.id }}</span>
+      </div>
+
+      <p style="margin: 0 0 6px; color: #555">
+        Buyer: {{ item.order.buyer.username }}
+      </p>
+      <p style="margin: 0 0 10px; color: #555">
+        Qty: {{ item.quantity }} | Unit: ${{ item.unit_price }}
+      </p>
+
+      {% if item.return_request %}
+      <div
+        style="
+          border-top: 1px solid #eee;
+          padding-top: 10px;
+          display: grid;
+          gap: 8px;
+        "
+      >
+        <p style="margin: 0; color: #555">
+          Return reason: {{ item.return_request.reason }}
+        </p>
+        <p style="margin: 0; color: #555">
+          Current status:
+          <strong>{{ item.return_request.get_status_display }}</strong>
+        </p>
+
+        <form
+          method="post"
+          action="{% url 'update_return_request' item.return_request.id %}"
+          style="display: flex; gap: 8px; flex-wrap: wrap"
+        >
+          {% csrf_token %}
+          <select
+            class="form-input"
+            name="status"
+            style="max-width: 260px"
+            required
+          >
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="received">Received</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <button type="submit" class="btn btn--primary">
+            Update Return Status
+          </button>
+        </form>
+      </div>
+      {% else %}
+      <p style="margin: 0; color: #777">No return request for this item.</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="listing-empty-state">
+    <p class="listing-empty-state__text">No sold products yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

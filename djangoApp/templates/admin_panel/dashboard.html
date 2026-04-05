@@ -1,0 +1,116 @@
+{% extends 'admin_panel/base.html' %} {% block title %}Dashboard - Admin Panel
+{%endblock %} {% block page_title %}Dashboard{% endblock %} {% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <h3>Total Users</h3>
+    <div class="number">{{ stats.total_users }}</div>
+  </div>
+  <div class="stat-card success">
+    <h3>Active Sellers</h3>
+    <div class="number">{{ stats.total_sellers }}</div>
+  </div>
+  <div class="stat-card info">
+    <h3>Active Buyers</h3>
+    <div class="number">{{ stats.total_buyers }}</div>
+  </div>
+  <div class="stat-card">
+    <h3>Total Products</h3>
+    <div class="number">{{ stats.total_products }}</div>
+  </div>
+  <div class="stat-card success">
+    <h3>Approved Products</h3>
+    <div class="number">{{ stats.approved_products }}</div>
+  </div>
+  <div class="stat-card warning">
+    <h3>Pending Approval</h3>
+    <div class="number">{{ stats.pending_products }}</div>
+  </div>
+  <div class="stat-card warning">
+    <h3>Banned Users</h3>
+    <div class="number">{{ stats.banned_users }}</div>
+  </div>
+</div>
+
+<!-- Recent Pending Products -->
+<div class="content-card">
+  <h3>Recent Pending Products</h3>
+  {% if recent_pending %}
+  <table>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Seller</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in recent_pending %}
+      <tr>
+        <td><strong>{{ product.name }}</strong></td>
+        <td>{{ product.seller.username }}</td>
+        <td>${{ product.price }}</td>
+        <td>{{ product.stock_quantity }}</td>
+        <td>
+          <div class="button-group">
+            <form
+              method="post"
+              action="{% url 'approve_product' product.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success btn-sm">
+                Approve
+              </button>
+            </form>
+            <form
+              method="post"
+              action="{% url 'reject_product' product.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure?');"
+              >
+                Reject
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a
+    href="{% url 'pending_products' %}"
+    class="btn btn-primary"
+    style="margin-top: 15px"
+    >View All Pending →</a
+  >
+  {% else %}
+  <div class="empty-message">
+    <p>No pending products. All products are either approved or rejected.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="content-card">
+  <h3>Quick Actions</h3>
+  <div class="button-group" style="margin-top: 15px">
+    <a href="{% url 'manage_sellers' %}" class="btn btn-primary"
+      >Manage Sellers</a
+    >
+    <a href="{% url 'manage_buyers' %}" class="btn btn-primary"
+      >Manage Buyers</a
+    >
+    <a href="{% url 'pending_products' %}" class="btn btn-warning"
+      >Review Pending Products</a
+    >
+  </div>
+</div>
+
+{% endblock %}

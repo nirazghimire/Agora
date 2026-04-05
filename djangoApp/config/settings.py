@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'accounts.apps.accountsConfig',
     'users.apps.usersConfig',
     'listings.apps.listingsConfig',
-    'orders.apps.OrdersConfig'
+    'orders.apps.OrdersConfig',
+    'admin_panel.apps.AdminPanelConfig'
 ]
 
 # Use the custom user model defined in users/models.py
@@ -69,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'orders.context_processors.cart_item_count',
             ],
         },
     },
