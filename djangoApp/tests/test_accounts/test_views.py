@@ -177,7 +177,8 @@ class LoginJWTViewTests(TestCase):
         self.client = Client()
         self.url = reverse("login")
         self.user = User.objects.create_user(
-            username="loginuser", password="testpass123", role="buyer"
+            username="loginuser", password="testpass123", role="buyer",
+            is_approved=True,
         )
 
     def test_get_login_page(self):
@@ -237,7 +238,8 @@ class LogoutJWTViewTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="logoutuser", password="testpass123", role="buyer"
+            username="logoutuser", password="testpass123", role="buyer",
+            is_approved=True,
         )
         self.client.login(username="logoutuser", password="testpass123")
         self.url = reverse("logout")
