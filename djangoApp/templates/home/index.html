@@ -1,0 +1,114 @@
+{% extends 'home/base.html' %} {% block content %}
+<div class="container listing-page">
+  <h2 class="listing-page__title">
+    {% if is_seller_view %}My Listings{% else %}Latest Finds {%endif%}
+  </h2>
+
+  {% if products %}
+  <div class="listing-grid">
+    {% for product in products %}
+    <div class="listing-card" data-product-card>
+      <div class="listing-card__media">
+        {% if product.image %}
+        <img
+          src="{{ product.image.url }}"
+          alt="{{ product.name }}"
+          class="listing-card__img"
+        />
+        {% else %}
+        <span class="listing-card__no-image">No Image</span>
+        {% endif %}
+      </div>
+      <div class="listing-card__body">
+        <div class="listing-card__row">
+          <h3 class="listing-card__name">{{ product.name }}</h3>
+          <span class="listing-card__price">${{ product.price }}</span>
+        </div>
+        <p class="listing-card__seller">
+          by
+          <strong class="listing-card__seller-name"
+            >{{product.seller.username }}</strong
+          >
+        </p>
+
+        {% if product.description %}
+        <p class="listing-card__desc">
+          {{ product.description|truncatechars:80 }}
+        </p>
+        {% endif %} {% if is_seller_view %}
+        <div class="listing-card__status-wrap">
+          {% if product.is_approved %}
+          <span class="listing-status listing-status--approved">Approved</span>
+          {% else %}
+          <span class="listing-status listing-status--pending"
+            >Pending Approval</span
+          >
+          {% endif %}
+        </div>
+        {% else %} {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="nav-btn nav-btn--primary listing-card__add-btn"
+            data-add-to-cart
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              />
+            </svg>
+            Add to Cart
+          </button>
+        </form>
+        {% else %}
+        <a
+          href="{% url 'login' %}"
+          class="nav-btn nav-btn--primary listing-card__add-btn"
+        >
+          Sign in to Add
+        </a>
+        {% endif %} {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="listing-empty-state">
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#ccc"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="listing-empty-state__icon"
+    >
+      <path
+        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+      ></path>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+    </svg>
+    <p class="listing-empty-state__text">
+      {% if is_seller_view %}You haven't listed any products yet. Click 'Add
+      Listing' to start!{% else %}No products available at the moment. Check
+      back later!{% endif%}
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

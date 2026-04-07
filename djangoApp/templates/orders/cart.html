@@ -1,0 +1,118 @@
+{% extends 'home/base.html' %} {% block title %}My Cart{% endblock %} {% block content %}
+<div class="container listing-page">
+  <h2 class="listing-page__title">My Cart</h2>
+
+  {% if cart and cart.items.count > 0 %}
+  <div class="listing-grid cart-grid">
+    {% for item in cart.items.all %}
+    <div class="listing-card cart-card">
+      <div class="listing-card__media">
+        {% if item.product.image %}
+        <img
+          src="{{ item.product.image.url }}"
+          alt="{{ item.product.name }}"
+          class="listing-card__img"
+        />
+        {% else %}
+        <span class="listing-card__no-image">No Image</span>
+        {% endif %}
+      </div>
+      <div class="listing-card__body">
+        <div class="listing-card__row">
+          <h3 class="listing-card__name">{{ item.product.name }}</h3>
+          <span class="listing-card__price">${{ item.product.price }}</span>
+        </div>
+
+        <div
+          style="display: flex; align-items: center; gap: 10px; margin: 12px 0"
+        >
+          <form
+            method="POST"
+            action="{% url 'decrement_cart_item' item.product.id %}"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="nav-btn"
+              style="min-width: 38px; justify-content: center"
+            >
+              -
+            </button>
+          </form>
+
+          <span
+            class="listing-card__seller cart-item__quantity"
+            style="margin: 0"
+            >Quantity: {{ item.quantity }}</span
+          >
+
+          <form
+            method="POST"
+            action="{% url 'increment_cart_item' item.product.id %}"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="nav-btn"
+              style="min-width: 38px; justify-content: center"
+            >
+              +
+            </button>
+          </form>
+        </div>
+
+        <form
+          method="POST"
+          action="{% url 'remove_from_cart' item.product.id %}"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="nav-btn nav-btn--primary create-listing-form__submit"
+            style="background: #cc0000; width: 100%"
+          >
+            Remove
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top: 40px; text-align: right">
+    <h3 style="font-size: 1.5rem">Total: ${{ cart.get_total_price }}</h3>
+    <a
+      href="{% url 'checkout' %}"
+      class="btn btn--primary"
+      style="margin-top: 14px"
+    >
+      Proceed to Checkout
+    </a>
+  </div>
+
+  {% else %}
+  <div class="listing-empty-state">
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#ccc"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="listing-empty-state__icon"
+    >
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path
+        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+      />
+    </svg>
+    <p class="listing-empty-state__text">
+      Your cart is empty! Check out the Latest Finds on the home page.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

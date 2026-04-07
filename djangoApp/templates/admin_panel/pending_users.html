@@ -1,0 +1,67 @@
+{% extends 'admin_panel/base.html' %} {% block title %}Pending Users - Admin Panel{% endblock %} {% block page_title %}Pending Users{% endblock %} 
+{% block content %}
+<div class="content-card">
+  {% if pending_users %}
+  <p style="margin-bottom: 20px; color: #7f8c8d">
+    <strong>{{ pending_users.count }}</strong> user(s) waiting for approval
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Joined</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in pending_users %}
+      <tr>
+        <td><strong>{{ user.username }}</strong></td>
+        <td><span style="text-transform: capitalize;">{{ user.role }}</span></td>
+        <td>{{ user.email }}</td>
+        <td><small>{{ user.created_at|date:"M d, Y H:i" }}</small></td>
+        <td>
+          <div class="button-group">
+            <form
+              method="post"
+              action="{% url 'approve_user' user.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success btn-sm">
+                Approve
+              </button>
+            </form>
+            <form
+              method="post"
+              action="{% url 'reject_user' user.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure you want to reject this user? Their account will be deleted.');"
+              >
+                Reject
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-message">
+    <p>No pending users.</p>
+  </div>
+  {% endif %}
+</div>
+
+<div class="alert alert-info" style="margin-top: 20px">
+  <strong>Note:</strong> Approving a user allows them to log in and use the platform. Rejecting a user will permanently delete their account registration data.
+</div>
+{% endblock %}

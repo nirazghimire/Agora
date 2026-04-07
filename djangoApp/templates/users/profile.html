@@ -1,0 +1,79 @@
+{% extends "home/base.html" %} {% load static %}
+{% block title %}Profile
+{%endblock %}
+{% block meta_description %}Your Agora Marketplace profile.
+{%endblock %}
+{% block content %}
+
+<section class="section">
+  <div class="container">
+    <div class="profile fade-up profile-page">
+      <!-- Profile Header -->
+      <div class="profile__header profile-page__header">
+        <div class="profile__avatar profile-page__avatar">
+          <span class="profile-page__avatar-letter">
+            {{ profile_user.username|first|upper }}
+          </span>
+        </div>
+
+        <div>
+          <h1 class="profile-page__name">
+            {% if profile_user.first_name %} {{ profile_user.first_name }}
+            {{profile_user.last_name }} {% else %} {{ profile_user.username }}
+            {%endif %}
+          </h1>
+          <p class="profile-page__username">
+            @{{ profile_user.username }}
+          </p>
+          <span class="badge {% if profile_user.is_seller %}badge--accent{% else %}badge--success{% endif %}">
+            {{ profile_user.role|title }}
+          </span>
+        </div>
+
+        <a href="{% url 'profile_edit' %}" class="btn btn--secondary profile-page__edit">Edit Profile</a>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Profile Details -->
+      <div class="profile-page__details-grid">
+        <div class="card profile-page__detail-card">
+          <h4 class="profile-page__detail-title">
+            Contact
+          </h4>
+          <p class="profile-page__detail-text profile-page__detail-text--compact">
+            <strong>Email:</strong> {{ profile_user.email|default:"Not set" }}
+          </p>
+        </div>
+
+        <div class="card profile-page__detail-card">
+          <h4 class="profile-page__detail-title">
+            About
+          </h4>
+          <p class="profile-page__detail-text">
+            {{ profile_user.bio|default:"No bio yet." }}
+          </p>
+        </div>
+
+        <div class="card profile-page__detail-card">
+          <h4 class="profile-page__detail-title">
+            {% if profile_user.is_seller %}Sales & Returns{% else %}Orders & Returns{% endif %}
+          </h4>
+          <p class="profile-page__detail-text profile-page__detail-text--compact">
+            {% if profile_user.is_seller %}
+            Manage sold products and process return requests from buyers.
+            {% else %}
+            View purchased products and initiate returns for order items.
+            {% endif %}
+          </p>
+          {% if profile_user.is_seller %}
+          <a href="{% url 'sales_history' %}" class="btn btn--secondary">View Sold Products</a>
+          {% else %}
+          <a href="{% url 'purchase_history' %}" class="btn btn--secondary">View Order History</a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+</section>
+{% endblock %}

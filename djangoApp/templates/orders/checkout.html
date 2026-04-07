@@ -1,0 +1,64 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container listing-page">
+  <h2 class="listing-page__title">Checkout</h2>
+
+  <div class="content-card" style="max-width: 900px; margin: 0 auto;">
+    <h3 style="margin-bottom: 12px;">Order Summary</h3>
+    <div style="display: grid; gap: 8px; border: 1px solid #e3ded6; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between;"><span>Subtotal</span><strong>${{ totals.subtotal }}</strong></div>
+      <div style="display: flex; justify-content: space-between;"><span>Sales Tax (7%)</span><strong>${{ totals.tax }}</strong></div>
+      <div style="display: flex; justify-content: space-between;"><span>Standard Shipping</span><strong>${{ totals.shipping }}</strong></div>
+      <div style="display: flex; justify-content: space-between; border-top: 1px solid #e3ded6; padding-top: 10px;"><span>Total</span><strong>${{ totals.total }}</strong></div>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% if addresses %}
+      <div class="form-group">
+        <label class="form-label" for="selected_address_id">Select Saved Address</label>
+        <select class="form-input" id="selected_address_id" name="selected_address_id">
+          <option value="">Use new address below</option>
+          {% for address in addresses %}
+          <option value="{{ address.id }}" {% if selected_address_id == address.id|stringformat:'s' %}selected{% endif %}>
+            {{ address.street }}, {{ address.state }}, {{ address.country }} - {{ address.zip_code }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      <h3 style="margin: 18px 0 8px; font-size: 1.1rem;">Delivery Address</h3>
+
+      <div class="form-group">
+        <label class="form-label" for="id_country">Country</label>
+        <input class="form-input" type="text" id="id_country" value="United States" readonly aria-readonly="true" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_state">State</label>
+        <input class="form-input" type="text" id="id_state" name="state" placeholder="State" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_street">Street Address</label>
+        <input class="form-input" type="text" id="id_street" name="street" placeholder="Street address" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_zip_code">Zip Code</label>
+        <input class="form-input" type="text" id="id_zip_code" name="zip_code" placeholder="Zip code" />
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <a href="{% url 'cart_detail' %}" class="btn btn--secondary">Back to Cart</a>
+        <button type="submit" class="btn btn--primary">Checkout</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

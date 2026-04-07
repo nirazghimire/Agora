@@ -1,0 +1,85 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin Panel - Agora{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'assets/css/admin.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h1>Admin Panel</h1>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="{% url 'admin_dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+        </li>
+
+        <li>
+          <strong class="sidebar-section">PRODUCTS</strong>
+        </li>
+        <li>
+          <a href="{% url 'pending_products' %}"
+            class="{% if request.resolver_match.url_name == 'pending_products' %}active{% endif %}">Pending Approval</a>
+        </li>
+        <li>
+          <a href="{% url 'approved_products' %}"
+            class="{% if request.resolver_match.url_name == 'approved_products' %}active{% endif %}">Approved</a>
+        </li>
+
+        <li>
+          <strong class="sidebar-section">USERS</strong>
+        </li>
+        <li>
+          <a href="{% url 'pending_users' %}"
+            class="{% if request.resolver_match.url_name == 'pending_users' %}active{% endif %}">Pending Users</a>
+        </li>
+        <li>
+          <a href="{% url 'manage_sellers' %}"
+            class="{% if request.resolver_match.url_name == 'manage_sellers' %}active{% endif %}">Manage Sellers</a>
+        </li>
+        <li>
+          <a href="{% url 'manage_buyers' %}"
+            class="{% if request.resolver_match.url_name == 'manage_buyers' %}active{% endif %}">Manage Buyers</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <h2>{% block page_title %}Admin Panel{% endblock %}</h2>
+        <div class="user-info">
+          <span>Welcome, <strong>{{ request.user.username }}</strong></span>
+          <form method="post" action="{% url 'logout' %}" style="margin: 0; display: inline">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Content Block -->
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</body>
+
+</html>

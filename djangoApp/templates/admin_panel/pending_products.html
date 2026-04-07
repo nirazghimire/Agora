@@ -1,0 +1,88 @@
+{% extends 'admin_panel/base.html' %} {% block title %}Pending Products - Admin
+Panel{% endblock %} {% block page_title %}Pending Products - Awaiting
+Approval{%endblock %} {% block content %}
+<div class="content-card">
+  {% if products %}
+  <p style="margin-bottom: 20px; color: #7f8c8d">
+    <strong>{{ products.count }}</strong> product(s) waiting for approval
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Seller</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Submitted</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>
+          <strong>{{ product.name }}</strong>
+          {% if product.image %}
+          <br /><small style="color: #7f8c8d">Image: ✓</small>
+          {% endif %}
+        </td>
+        <td>{{ product.seller.username }}</td>
+        <td>{{ product.category }}</td>
+        <td>${{ product.price }}</td>
+        <td>{{ product.stock_quantity }}</td>
+        <td><small>{{ product.id }}</small></td>
+        <td>
+          <div class="button-group">
+            <form
+              method="post"
+              action="{% url 'approve_product' product.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success btn-sm">
+                Approve
+              </button>
+            </form>
+            <form
+              method="post"
+              action="{% url 'reject_product' product.id %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="
+                  return confirm('This will delete the product. Continue?');
+                "
+              >
+                Reject
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-message">
+    <p>No pending products. All submitted products have been reviewed.</p>
+    <a
+      href="{% url 'admin_dashboard' %}"
+      class="btn btn-primary"
+      style="margin-top: 20px"
+      >Back to Dashboard</a
+    >
+  </div>
+  {% endif %}
+</div>
+
+<!-- Product Details Modal Context -->
+<div class="alert alert-info" style="margin-top: 20px">
+  <strong>Note:</strong> Approving a product makes it visible to all buyers.
+  Rejecting a product permanently deletes it.
+</div>
+
+{% endblock %}

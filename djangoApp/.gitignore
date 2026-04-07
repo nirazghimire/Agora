@@ -1,0 +1,18 @@
+#virtual enviornment
+env  
+
+#env variables
+.env
+
+#python cache
+*.pyc
+__pycache__/
+
+
+#media files
+media/
+
+
+
+
+
