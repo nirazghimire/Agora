@@ -93,6 +93,7 @@ DATABASES = {
         "USER": os.environ["DB_USER"],
         "HOST": os.environ["DB_HOST"],
         "PORT": os.environ["DB_PORT"],
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
     }
 }
 
