@@ -1,0 +1,78 @@
+<div class="quickview-dialog">
+  <div class="quickview-header">
+     <div class="quickview-dp">
+       {% if product.image %}
+         <img src="{{ product.image.url }}" alt="{{ product.name }}">
+       {% else %}
+         <span class="quickview-dp-fallback">{{ product.name|make_list|first|upper }}</span>
+       {% endif %}
+     </div>
+     <div class="quickview-title-area">
+       <h2 class="quickview-title">{{ product.name }}</h2>
+       <div class="quickview-byline">by {{ product.seller.username }}</div>
+     </div>
+  </div>
+  
+  <div class="quickview-body">
+    <div class="quickview-price">${{ product.price }}</div>
+    <div class="quickview-rating">
+      {% if review_count > 0 %}
+        <span class="review-stars">★ {{ avg_rating }} / 5</span> ({{ review_count }} reviews)
+      {% endif %}
+    </div>
+
+    <div class="quickview-details">
+       <p>{{ product.description|linebreaksbr }}</p>
+       <ul class="quickview-specs">
+         <li><strong>Brand:</strong> {{ product.brand }}</li>
+         <li><strong>Category:</strong> {{ product.category }}</li>
+         <li><strong>Color:</strong> {{ product.color }}</li>
+         <li><strong>Model:</strong> {{ product.model_number }}</li>
+         <li>
+            <strong>Stock:</strong> 
+            {% if product.stock_quantity > 0 %}
+               <span class="text-success">{{ product.stock_quantity }} available</span>
+            {% else %}
+               <span class="text-error">Out of stock</span>
+            {% endif %}
+         </li>
+       </ul>
+    </div>
+    
+    {% if not is_owner and product.is_approved and product.seller.is_active %}
+      {% if request.user.is_authenticated and not request.user.is_seller %}
+        {% if product.stock_quantity > 0 %}
+          <form method="POST" action="{% url 'add_to_cart' product.id %}" class="quickview-add-form" onsubmit="setTimeout(()=>document.getElementById('quickview-modal').classList.remove('open'), 100)">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--primary btn--full" data-add-to-cart>Add to Cart</button>
+          </form>
+        {% else %}
+          <button class="btn btn--secondary btn--full" disabled>Out of Stock</button>
+        {% endif %}
+      {% elif not request.user.is_authenticated %}
+        <a href="{% url 'login' %}" class="btn btn--primary btn--full" style="justify-content: center;">Sign in to Add</a>
+      {% endif %}
+    {% endif %}
+
+    <div class="divider"></div>
+    
+    <div class="quickview-reviews">
+      <h3>Reviews from other buyers</h3>
+      {% if reviews %}
+        {% for review in reviews %}
+          <div class="quickview-review-item">
+            <div class="quickview-review-header">
+              <strong>{{ review.buyer.username }}</strong>
+              <div class="quickview-stars" style="color: #f5c518; letter-spacing: 2px;">
+                 {% for i in '12345'|make_list %}{% if forloop.counter <= review.rating %}★{% else %}<span style="color: #ccc;">★</span>{% endif %}{% endfor %}
+              </div>
+            </div>
+            <p>{{ review.comment }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No reviews so far for this product.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -46,6 +46,10 @@ def signup(request):
             messages.error(request, 'Username, email, and password are required.')
             return render(request, 'users/signup.html')
 
+        if len(password) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return render(request, 'users/signup.html')
+
         if role == 'buyer' and (not country or not state or not street or not zip_code):
             messages.error(request, 'Address details are required for buyer accounts.')
             return render(request, 'users/signup.html')
@@ -121,6 +125,39 @@ def login_jwt(request):
         #if user login fails, the error message flashes and then renders the login page 
     #if the request is GET ; 
     return render(request, 'users/signin.html')
+
+
+def forgot_password(request):
+    """Reset a user's password using their username."""
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not username or not new_password or not confirm_password:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'users/forgot_password.html')
+
+        if new_password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'users/forgot_password.html')
+
+        if len(new_password) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return render(request, 'users/forgot_password.html')
+
+        user = User.objects.filter(username=username).first()
+        if not user:
+            messages.error(request, 'No account found with that username.')
+            return render(request, 'users/forgot_password.html')
+
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+        messages.success(request, 'Password reset successful. Please sign in with your new password.')
+        return redirect('login')
+
+    return render(request, 'users/forgot_password.html')
+
 
 #the decorator restricts the logout to POST and does not trigger on GET
 @require_POST

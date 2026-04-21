@@ -1,0 +1,42 @@
+{% extends 'home/base.html' %} {% block title %}Product Reviews{% endblock %}
+
+{% block content %}
+<div class="container listing-page">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <h2 class="listing-page__title" style="margin-bottom: 0;">Product Reviews</h2>
+    <div style="text-align: right;">
+        <div style="font-size: 1.8rem; font-weight: bold; color: var(--clr-accent);">{{ avg_rating }} <span style="font-size: 1rem; color: var(--clr-muted);">/ 5</span></div>
+        <div style="font-size: 0.9rem; color: var(--clr-muted);">Average across {{ total_count }} review{{ total_count|pluralize }}</div>
+    </div>
+  </div>
+
+  {% if reviews %}
+  <div style="display: grid; gap: 16px;">
+    {% for review in reviews %}
+    <div class="card" style="padding: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <h3 style="margin-bottom: 0.25rem; font-size: 1.1rem;"><a href="{% url 'product_detail' review.product.id %}">{{ review.product.name }}</a></h3>
+            <div style="font-size: 0.85rem; color: var(--clr-muted);">Reviewed by <strong>{{ review.buyer.username }}</strong> on {{ review.created_at|date:'M d, Y' }}</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 2px;">
+            {% for i in '12345'|make_list %}
+                {% if forloop.counter <= review.rating %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5c518" stroke="#f5c518"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% else %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% endif %}
+            {% endfor %}
+        </div>
+      </div>
+      <p style="margin: 0; color: var(--clr-text); font-size: 0.95rem;">{{ review.comment }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="listing-empty-state">
+    <p class="listing-empty-state__text">No buyers have reviewed your products yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

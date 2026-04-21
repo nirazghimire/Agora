@@ -267,10 +267,20 @@ def purchase_history(request):
 
     orders = (
         Order.objects.filter(buyer=request.user)
-        .prefetch_related('items__return_request')
+        .prefetch_related('items__return_request', 'items__product')
         .order_by('-created_at')
     )
-    return render(request, 'orders/purchase_history.html', {'orders': orders})
+    
+    # Get IDs of products this user has already reviewed
+    from listings.models import Review
+    reviewed_product_ids = list(
+        Review.objects.filter(buyer=request.user).values_list('product_id', flat=True)
+    )
+
+    return render(request, 'orders/purchase_history.html', {
+        'orders': orders,
+        'reviewed_product_ids': reviewed_product_ids,
+    })
 
 
 @login_required

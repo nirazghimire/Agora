@@ -39,4 +39,21 @@ class Product(models.Model):
     model_number = models.IntegerField()
     brand = models.CharField(max_length=100)
     description = models.TextField()
-    
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveIntegerField()  # 1–5
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('product', 'buyer')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Review by {self.buyer.username} on {self.product.name} ({self.rating}/5)"

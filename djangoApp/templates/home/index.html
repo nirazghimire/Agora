@@ -6,83 +6,7 @@
 
   {% if products %}
   <div class="listing-grid">
-    {% for product in products %}
-    <div class="listing-card" data-product-card>
-      <div class="listing-card__media">
-        {% if product.image %}
-        <img
-          src="{{ product.image.url }}"
-          alt="{{ product.name }}"
-          class="listing-card__img"
-        />
-        {% else %}
-        <span class="listing-card__no-image">No Image</span>
-        {% endif %}
-      </div>
-      <div class="listing-card__body">
-        <div class="listing-card__row">
-          <h3 class="listing-card__name">{{ product.name }}</h3>
-          <span class="listing-card__price">${{ product.price }}</span>
-        </div>
-        <p class="listing-card__seller">
-          by
-          <strong class="listing-card__seller-name"
-            >{{product.seller.username }}</strong
-          >
-        </p>
-
-        {% if product.description %}
-        <p class="listing-card__desc">
-          {{ product.description|truncatechars:80 }}
-        </p>
-        {% endif %} {% if is_seller_view %}
-        <div class="listing-card__status-wrap">
-          {% if product.is_approved %}
-          <span class="listing-status listing-status--approved">Approved</span>
-          {% else %}
-          <span class="listing-status listing-status--pending"
-            >Pending Approval</span
-          >
-          {% endif %}
-        </div>
-        {% else %} {% if request.user.is_authenticated %}
-        <form method="POST" action="{% url 'add_to_cart' product.id %}">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="nav-btn nav-btn--primary listing-card__add-btn"
-            data-add-to-cart
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path
-                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
-              />
-            </svg>
-            Add to Cart
-          </button>
-        </form>
-        {% else %}
-        <a
-          href="{% url 'login' %}"
-          class="nav-btn nav-btn--primary listing-card__add-btn"
-        >
-          Sign in to Add
-        </a>
-        {% endif %} {% endif %}
-      </div>
-    </div>
-    {% endfor %}
+    {% include 'listings/product_grid_items.html' %}
   </div>
   {% else %}
   <div class="listing-empty-state">
@@ -110,5 +34,17 @@
     </p>
   </div>
   {% endif %}
+</div>
+
+<!-- Quickview Modal Container -->
+<div id="quickview-modal" class="modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close onclick="if(event.target === this) closeQuickview()">
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="quickview-title">
+      <button class="modal__close" aria-label="Close modal" data-micromodal-close onclick="closeQuickview()">&times;</button>
+      <div id="quickview-content" class="modal__content">
+        <!-- Content injected via JS -->
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

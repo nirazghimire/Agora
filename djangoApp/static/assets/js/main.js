@@ -59,43 +59,85 @@ function initProductSearch() {
   const searchInput = document.getElementById("product-search");
   if (!searchInput) return;
 
-  const prod = document.querySelectorAll(".listing-card");
   let debounceTimer;
+  let latestRequestId = 0;
 
   searchInput.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     //important concept of debouncing
     debounceTimer = setTimeout(() => {
       const searchTerm = searchInput.value.toLowerCase().trim();
+      const grid = document.querySelector(".listing-grid");
+      let emptyStateContainer = document.querySelector(".listing-empty-state-wrapper");
+      const requestId = ++latestRequestId;
 
-      prod.forEach((product) => {
-        const nameEl = product.querySelector(".listing-card__name");
-        const descEl = product.querySelector(".listing-card__desc");
-        if (!nameEl) return;
+      if (emptyStateContainer) emptyStateContainer.style.display = "none";
 
-        if (searchTerm.length > 0 && searchTerm.length < 3) {
-          product.style.display = "block";
-          return;
-        }
+      fetch(`/search-ajax/?q=${encodeURIComponent(searchTerm)}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Search failed");
+          return res.text();
+        })
+        .then((html) => {
+          // Ignore stale responses when users type quickly.
+          if (requestId !== latestRequestId) return;
 
-        if (searchTerm.length === 0) {
-          product.style.display = "block";
-          return;
-        }
-
-        const productName = nameEl.textContent.toLowerCase();
-        const productDesc = descEl ? descEl.textContent.toLowerCase() : "";
-
-        if (
-          productName.includes(searchTerm) ||
-          productDesc.includes(searchTerm)
-        ) {
-          product.style.display = "block";
-        } else {
-          product.style.display = "none";
-        }
-      });
+          const hasProducts = html.includes('class="listing-card"');
+          
+          if (!hasProducts) {
+            if (grid) {
+              grid.innerHTML = "";
+              grid.style.display = "none";
+            }
+            // Ensure empty state wrapper exists
+            if (!emptyStateContainer) {
+              emptyStateContainer = document.createElement("div");
+              emptyStateContainer.className = "listing-empty-state-wrapper";
+              emptyStateContainer.innerHTML = '<div class="listing-empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="listing-empty-state__icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><p class="listing-empty-state__text">No product found.</p></div>';
+              if (grid) grid.parentNode.insertBefore(emptyStateContainer, grid.nextSibling);
+            }
+            emptyStateContainer.style.display = "block";
+          } else {
+            if (grid) {
+              grid.innerHTML = html;
+              grid.style.display = "grid";
+            }
+            if (emptyStateContainer) emptyStateContainer.style.display = "none";
+          }
+        })
+        .catch(() => {
+          if (requestId !== latestRequestId) return;
+          if (grid) {
+             grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #c0392b;">An error occurred while searching.</div>';
+          }
+        });
     }, 300);
+  });
+}
+
+function initQuickviewModal() {
+  document.addEventListener("click", (e) => {
+    const clickedInteractive = e.target.closest(
+      "form, button, [data-add-to-cart], .listing-card__add-btn, .nav-btn",
+    );
+    if (clickedInteractive) return;
+
+    const trigger = e.target.closest(".js-open-quickview");
+    const card = e.target.closest(".listing-card[data-product-id]");
+    if (!trigger && !card) return;
+
+    // Preserve browser affordances for opening links in a new tab/window.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    const productId = trigger?.dataset.productId || card?.dataset.productId;
+    if (!productId) return;
+
+    e.preventDefault();
+    openQuickview(productId);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeQuickview();
   });
 }
 
@@ -267,6 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavbarScroll();
   initMobileNav();
   initProductSearch();
+  initQuickviewModal();
   initAlerts();
   initAddToCart();
   Cart.init();
@@ -288,3 +331,37 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.MarketCart = Cart;
+
+function openQuickview(productId) {
+  const modal = document.getElementById("quickview-modal");
+  const content = document.getElementById("quickview-content");
+  if (!modal || !content) return;
+  
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  content.innerHTML = '';
+  document.body.style.overflow = "hidden";
+  
+  fetch(`/product/${productId}/quickview/`)
+    .then(res => {
+      if (!res.ok) { throw new Error('Failed to load product'); }
+      return res.text();
+    })
+    .then(html => {
+      content.innerHTML = html;
+    })
+    .catch(err => {
+      content.innerHTML = `<div style="text-align: center; padding: 2rem; color: #c0392b;">Could not load product details.</div>`;
+    });
+}
+
+function closeQuickview() {
+  const modal = document.getElementById("quickview-modal");
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+window.openQuickview = openQuickview;
+window.closeQuickview = closeQuickview;
