@@ -4,9 +4,13 @@ env
 #env variables
 .env
 
-#python cache
+#python cache & other junk files which are just noise instead of needing real tracking ;
+#these are all auto-generated junk .pyc being cached compiled files by python, __pycache__ being 
+# directory to hold .pyc files, .DS_Store being hidden macOS file that the Finder crates to store metadata
+# about the folder ; 
 *.pyc
 __pycache__/
+.DS_Store
 
 
 #media files

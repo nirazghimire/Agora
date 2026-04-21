@@ -112,6 +112,21 @@ class SignupViewTests(TestCase):
         # Should stay on signup page (200 re-render)
         self.assertEqual(response.status_code, 200)
 
+    def test_password_shorter_than_8_rejected(self):
+        response = self.client.post(self.url, {
+            "username": "shortpassuser",
+            "email": "short@example.com",
+            "password": "short7",
+            "role": "seller",
+            "bio": "",
+            "country": "",
+            "state": "",
+            "street": "",
+            "zip_code": "",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username="shortpassuser").exists())
+
     def test_duplicate_username(self):
         User.objects.create_user(username="taken", password="testpass123", role="buyer")
         response = self.client.post(self.url, {
@@ -263,3 +278,56 @@ class LogoutJWTViewTests(TestCase):
         session = self.client.session
         self.assertNotIn("jwt_access", session)
         self.assertNotIn("jwt_refresh", session)
+
+
+class ForgotPasswordViewTests(TestCase):
+    """Tests for username-based forgot password flow."""
+
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse("forgot_password")
+        self.user = User.objects.create_user(
+            username="forgotuser",
+            password="oldpass123",
+            role="buyer",
+            is_approved=True,
+        )
+
+    def test_get_forgot_password_page(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_successful_password_reset(self):
+        response = self.client.post(self.url, {
+            "username": "forgotuser",
+            "new_password": "newpass123",
+            "confirm_password": "newpass123",
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("login"))
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("newpass123"))
+        self.assertFalse(self.user.check_password("oldpass123"))
+
+    def test_invalid_username_does_not_reset_password(self):
+        response = self.client.post(self.url, {
+            "username": "missinguser",
+            "new_password": "newpass123",
+            "confirm_password": "newpass123",
+        })
+        self.assertEqual(response.status_code, 200)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("oldpass123"))
+
+    def test_password_mismatch_rejected(self):
+        response = self.client.post(self.url, {
+            "username": "forgotuser",
+            "new_password": "newpass123",
+            "confirm_password": "different123",
+        })
+        self.assertEqual(response.status_code, 200)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("oldpass123"))

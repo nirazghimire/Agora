@@ -48,6 +48,7 @@
         <div class="navbar__actions">
           {% if request.user.is_authenticated %}
           {% if request.user.is_seller %}
+          <a href="{% url 'seller_reviews' %}" class="nav-btn">Reviews</a>
           <a href="{% url 'create_listing' %}" class="nav-btn">Add Listing</a>
           {% endif %}
           <a href="{% url 'profile' %}" class="nav-btn" id="profile-btn">
@@ -100,6 +101,7 @@
           <input class="form-input" type="search" name="q" placeholder="Search Products..." />
           {% if request.user.is_authenticated %}
           {% if request.user.is_seller %}
+          <a href="{% url 'seller_reviews' %}" class="nav-btn nav-btn--mobile">Reviews</a>
           <a href="{% url 'create_listing' %}" class="nav-btn nav-btn--mobile">Add Listing</a>
           {% endif %}
           <a href="{% url 'profile' %}" class="nav-btn nav-btn--mobile">My Profile</a>
@@ -165,7 +167,7 @@
   <!-- ══════════════════════════════════════════════════════════
        SCRIPTS
   ═══════════════════════════════════════════════════════════ -->
-  <script src="{% static 'assets/js/main.js' %}?v=2.0"></script>
+  <script src="{% static 'assets/js/main.js' %}?v=2.3"></script>
   {% block extra_js %}{% endblock %}
 </body>
 

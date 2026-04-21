@@ -45,7 +45,11 @@
               margin-bottom: 8px;
             "
           >
+            {% if item.product %}
+            <strong><a href="{% url 'product_detail' item.product.id %}" style="color: var(--clr-text); text-decoration: none;">{{ item.product_name }}</a></strong>
+            {% else %}
             <strong>{{ item.product_name }}</strong>
+            {% endif %}
             <span>${{ item.unit_price }} x {{ item.quantity }}</span>
           </div>
 
@@ -79,6 +83,40 @@
             </div>
           </form>
           {% endif %}
+          
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #eee;">
+             {% if item.product %}
+             {% if item.product.id in reviewed_product_ids %}
+                <p style="margin: 0; font-size: 0.9rem; color: #2d7a5f; align-items: center; display: flex; gap: 0.25rem;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  You have reviewed this product
+                </p>
+             {% else %}
+               <form method="post" action="{% url 'submit_review' item.product.id %}" style="display: grid; gap: 8px;">
+                 {% csrf_token %}
+                 <h4 style="margin: 0; font-size: 0.9rem;">Leave a Review</h4>
+                 <div style="display: flex; gap: 8px;">
+                     <select name="rating" class="form-select" style="max-width: 150px; padding: 0.35rem 0.5rem;" required>
+                         <option value="" disabled selected>Rating (1-5)</option>
+                         <option value="5">5 - Excellent</option>
+                         <option value="4">4 - Good</option>
+                         <option value="3">3 - Average</option>
+                         <option value="2">2 - Fair</option>
+                         <option value="1">1 - Poor</option>
+                     </select>
+                 </div>
+                 <textarea name="comment" class="form-textarea" rows="2" style="min-height: 60px; padding: 0.5rem;" placeholder="Tell us what you liked or disliked" required></textarea>
+                 <div>
+                     <button type="submit" class="btn btn--primary btn--sm">Submit Review</button>
+                 </div>
+               </form>
+             {% endif %}
+             {% else %}
+             <p style="margin: 0; font-size: 0.9rem; color: #666;">
+               Review unavailable because this product is no longer listed.
+             </p>
+             {% endif %}
+          </div>
         </div>
         {% endfor %}
       </div>
