@@ -23,7 +23,11 @@ class LatestSellerSalesFeed(Feed):
         return f"Sale: {item.quantity} x {item.product_name}"
 
     def item_description(self, item):
-        return f"Order #{item.order.id} | Unit Price: ${item.unit_price} | Total: ${item.line_total}"
+        address = f"{item.order.street}, {item.order.state}, {item.order.zip_code}, {item.order.country}"
+        return f"Order #{item.order.id} | Unit Price: ${item.unit_price} | Total: ${item.line_total} | Ship-to: {address}"
+
+    def item_pubdate(self, item):
+        return item.created_at
 
     def item_link(self, item):
         return reverse('sales_history')
