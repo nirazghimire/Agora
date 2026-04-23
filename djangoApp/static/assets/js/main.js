@@ -151,7 +151,7 @@ const Cart = {
   count: 0,
 
   init() {
-    this.badge = $(".cart-badge");
+    this.badge = $("#main-cart-badge");
     this.bootstrapCount();
     this.renderCount();
   },

@@ -48,14 +48,13 @@ Approval{%endblock %} {% block content %}
               method="post"
               action="{% url 'reject_product' product.id %}"
               style="display: inline"
+              onsubmit="return promptRejectionReason(this);"
             >
               {% csrf_token %}
+              <input type="hidden" name="rejection_reason" class="rejection-reason-input" value="">
               <button
                 type="submit"
                 class="btn btn-danger btn-sm"
-                onclick="
-                  return confirm('This will delete the product. Continue?');
-                "
               >
                 Reject
               </button>
@@ -82,7 +81,19 @@ Approval{%endblock %} {% block content %}
 <!-- Product Details Modal Context -->
 <div class="alert alert-info" style="margin-top: 20px">
   <strong>Note:</strong> Approving a product makes it visible to all buyers.
-  Rejecting a product permanently deletes it.
+  Rejecting a product returns it to the seller with a rejection reason.
 </div>
+
+<script>
+function promptRejectionReason(form) {
+    var reason = prompt("Please enter the reason for rejecting this product:");
+    if (reason === null || reason.trim() === "") {
+        alert("A rejection reason is required.");
+        return false;
+    }
+    form.querySelector('.rejection-reason-input').value = reason;
+    return true;
+}
+</script>
 
 {% endblock %}

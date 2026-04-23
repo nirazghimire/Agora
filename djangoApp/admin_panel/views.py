@@ -17,13 +17,13 @@ def admin_dashboard(request):
         'total_buyers': User.objects.filter(role='buyer', is_active=True).count(),
         'total_products': Product.objects.count(),
         'approved_products': Product.objects.filter(is_approved=True).count(),
-        'pending_products': Product.objects.filter(is_approved=False).count(),
+        'pending_products': Product.objects.filter(is_approved=False, is_rejected=False).count(),
         'pending_users': User.objects.filter(is_approved=False, role__in=['buyer', 'seller']).count(),
         'banned_users': User.objects.filter(is_active=False, role__in=['buyer', 'seller']).count(),
     }
     
     # Get recent pending products and users
-    recent_pending = Product.objects.filter(is_approved=False).select_related('seller').order_by('-id')[:5]
+    recent_pending = Product.objects.filter(is_approved=False, is_rejected=False).select_related('seller').order_by('-id')[:5]
     recent_pending_users = User.objects.filter(is_approved=False, role__in=['buyer', 'seller']).order_by('-id')[:5]
     
     context = {
@@ -39,7 +39,7 @@ def pending_products(request):
     """
     View all pending products waiting for admin approval
     """
-    products = Product.objects.filter(is_approved=False).select_related('seller').order_by('-id')
+    products = Product.objects.filter(is_approved=False, is_rejected=False).select_related('seller').order_by('-id')
     
     context = {
         'products': products,
@@ -80,13 +80,17 @@ def approve_product(request, product_id):
 @require_http_methods(["POST"])
 def reject_product(request, product_id):
     """
-    Reject and delete a pending product
+    Reject a pending product
     """
     product = get_object_or_404(Product, id=product_id)
-    product_name = product.name
-    product.delete()
+    reason = request.POST.get('rejection_reason', '').strip()
     
-    messages.success(request, f"Product '{product_name}' has been rejected and deleted.")
+    product.is_approved = False
+    product.is_rejected = True
+    product.rejection_reason = reason
+    product.save()
+    
+    messages.success(request, f"Product '{product.name}' has been rejected.")
     return redirect('pending_products')
 
 

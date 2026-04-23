@@ -71,13 +71,16 @@ class ProductManagementTests(AdminViewTestMixin, TestCase):
         self.product.refresh_from_db()
         self.assertTrue(self.product.is_approved)
 
-    def test_reject_product_deletes_it(self):
+    def test_reject_product_marks_rejected(self):
         pid = self.product.id
         response = self.client.post(
-            reverse("reject_product", args=[pid])
+            reverse("reject_product", args=[pid]),
+            data={"rejection_reason": "Not appropriate"}
         )
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Product.objects.filter(id=pid).exists())
+        self.product.refresh_from_db()
+        self.assertTrue(self.product.is_rejected)
+        self.assertEqual(self.product.rejection_reason, "Not appropriate")
 
     def test_revoke_approved_product(self):
         self.product.is_approved = True

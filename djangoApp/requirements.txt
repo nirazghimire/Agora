@@ -12,3 +12,4 @@ python-magic==0.4.27
 rest-framework-simplejwt==0.0.2
 sqlparse==0.5.5
 typing_extensions==4.15.0
+whitenoise

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .feeds import LatestSellerSalesFeed
 
 urlpatterns = [
     path('cart/', views.cart_detail, name='cart_detail'),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('increase/<int:product_id>/', views.increment_cart_item, name='increment_cart_item'),
     path('decrease/<int:product_id>/', views.decrement_cart_item, name='decrement_cart_item'),
     path('remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('seller/rss/sales/', LatestSellerSalesFeed(), name='seller_sales_rss'),
 ]

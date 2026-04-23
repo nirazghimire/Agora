@@ -82,7 +82,8 @@ def signup(request):
                 zip_code=int(zip_code),
             )
 
-        return redirect('home')
+        messages.success(request, 'Your account has been created and is pending admin approval. You will be able to log in once an admin approves it.')
+        return redirect('login')
     return render(request,'users/signup.html')
 
 
