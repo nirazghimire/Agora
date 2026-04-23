@@ -30,13 +30,15 @@ def validate_image_file(file):
 class Product(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
     is_approved = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    rejection_reason = models.TextField(blank=True, null=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to=upload_icon_to,validators = [validate_image_file])
     stock_quantity = models.IntegerField()
     category = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
-    model_number = models.IntegerField()
+    model_number = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
     description = models.TextField()
 
