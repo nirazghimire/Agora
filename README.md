@@ -34,12 +34,17 @@ The integrity of Agora is maintained through strictly enforced workflows and bus
 - **Security First:** Critical actions—such as authentication state changes, checkout processes, and return initiations—are backed by rigorous server-side validation. All state-mutating requests (POST) are fortified with CSRF protection.
 
 
+## Recently Implemented Features (Completed)
+- **Product Reviews & Ratings:** Integrated a comprehensive, buyer-only rating and review system for products they have purchased.
+- **Direct Product Comparisons:** A dedicated, stateful `/compare/` tool allowing buyers to compare up to 3 products side-by-side.
+- **Seller RSS Feed:** A live syndication feed broadcasting recent sales explicitly for each seller.
+- **Explicit Rejection Feedback:** Administrative tools to mark products as rejected and securely attach rejection reasons visible to the listing seller.
+
 ## Scope and Future Roadmap
 
 While Agora provides a complete end-to-end marketplace experience, certain features remain outside our current scope and are earmarked for future iterations:
 - The development of a comprehensive, public-facing RESTful API.
 - Integration of live payment gateways for automated payout processing.
-- Advanced features like direct product-to-product comparisons and an integrated user review/rating system.
 
 ## Project Contributors
 - Ayush Dhungana (ad2431)
