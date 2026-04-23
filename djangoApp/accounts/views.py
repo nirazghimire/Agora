@@ -26,7 +26,10 @@ def home(request):
         # Only show products from active sellers that are approved
         products = Product.objects.filter(is_approved=True, seller__is_active=True).order_by('-id')
         is_seller_view = False
-    return render(request, 'home/index.html', {'products': products, 'is_seller_view': is_seller_view})
+    return render(request, 'home/index.html', 
+                  {'products': products, 'is_seller_view': is_seller_view})
+
+    #note : render has three layers of inputs: a request object(carries metadata like user,session, headers),html template to render, and the context-- the dict(the varialbes to be passed to the template) ; the keys are the varialbes passed onto the templates and the values of the dict are the actual data passed to render in the UI;
 
 
 
@@ -123,6 +126,7 @@ def login_jwt(request):
         
         messages.error(request, 'Invalid credentials.') 
         #if user login fails, the error message flashes and then renders the login page 
+        
     #if the request is GET ; 
     return render(request, 'users/signin.html')
 

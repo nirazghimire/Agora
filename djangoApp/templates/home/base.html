@@ -1,4 +1,5 @@
 {% load static %}
+<!--This command lets django load the static path/url automatically;so no need to hardcode the path ; the static path/url is variable ; so we donot assume the path & hardcode the paths here but instead keep static url in the global config and let framework load the url from the config file-->
 <!doctype html>
 <html lang="en">
 
@@ -169,6 +170,7 @@
   ═══════════════════════════════════════════════════════════ -->
   <script src="{% static 'assets/js/main.js' %}?v=2.3"></script>
   {% block extra_js %}{% endblock %}
-</body>
 
+  <!-- the ?v=2.3 in the url above is called 'query string cache buster'-->
+</body>
 </html>

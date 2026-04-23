@@ -8,12 +8,15 @@
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+// these are helper functions for selecting the html elements ; instead of typing document.querySelector.... every time, these helper functions would reduce the entire typeing to few words;
+
 
 function initNavbarScroll() {
   const navbar = $(".navbar");
   if (!navbar) return;
 
   const toggle = () => navbar.classList.toggle("scrolled", window.scrollY > 10);
+  // the toggle function 'scrolled to navbarclasslist once the user scrolls more than 10 in terms of Y-axis in the browser' ; the classList.toggle flips the state ; if the class is present, it removes it and if the classname is not present, it adds to it ; 
   window.addEventListener("scroll", toggle, { passive: true });
   toggle();
 }
@@ -22,6 +25,7 @@ function initMobileNav() {
   const hamburger = $(".navbar__hamburger");
   const drawer = $(".navbar__drawer");
   if (!hamburger || !drawer) return;
+  //if no elements found, exit out of the function ; 
 
   let open = false;
 
@@ -65,6 +69,7 @@ function initProductSearch() {
   searchInput.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     //important concept of debouncing
+    // debouncing is a programming/engineering technique that ensures a function or event is only executed once after a specified period of inactivity,effectively limiting the rate at which it triggers ; 
     debounceTimer = setTimeout(() => {
       const searchTerm = searchInput.value.toLowerCase().trim();
       const grid = document.querySelector(".listing-grid");
@@ -210,6 +215,8 @@ const Cart = {
   },
 };
 
+//the JS object here is similar to how a class is written ; it has its own attributes and behavior but is written in the dictionary form and not like a typical class form !
+
 function initAlerts() {
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".alert__close");
@@ -305,6 +312,7 @@ function initAddToCart() {
   });
 }
 
+//once all of the DOM content is loaded, it fires up all the functions ; the entire js file here acts as a single script which is attached to the base html file ; 
 document.addEventListener("DOMContentLoaded", () => {
   initNavbarScroll();
   initMobileNav();
