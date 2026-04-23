@@ -1,5 +1,5 @@
 from django.contrib import admin
-#UserAdmin is the default admin for User model ; we are inheriting it to add custom fields
+from django.contrib.auth.admin import UserAdmin
+from .models import User
 
-
-
+admin.site.register(User, UserAdmin)

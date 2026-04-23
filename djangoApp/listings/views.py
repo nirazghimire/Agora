@@ -191,3 +191,47 @@ def search_products_ajax(request):
         'products': products,
         'is_seller_view': False
     })
+
+
+@require_POST
+def add_to_compare(request, product_id):
+    """Add a product to the comparison list in the session."""
+    if 'compare_list' not in request.session:
+        request.session['compare_list'] = []
+    
+    compare_list = request.session['compare_list']
+    
+    if product_id not in compare_list:
+        if len(compare_list) >= 3:
+            messages.warning(request, "You can only compare up to 3 products at a time.")
+        else:
+            compare_list.append(product_id)
+            request.session.modified = True
+            messages.success(request, "Product added to compare list.")
+    else:
+        messages.info(request, "Product is already in your compare list.")
+        
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@require_POST
+def remove_from_compare(request, product_id):
+    """Remove a product from the comparison list."""
+    if 'compare_list' in request.session:
+        compare_list = request.session['compare_list']
+        if product_id in compare_list:
+            compare_list.remove(product_id)
+            request.session.modified = True
+            messages.success(request, "Product removed from compare list.")
+            
+    return redirect('compare_products')
+
+
+def compare_products(request):
+    """Render the comparison page with selected products."""
+    compare_list = request.session.get('compare_list', [])
+    products = Product.objects.filter(id__in=compare_list)
+    
+    return render(request, 'listings/compare.html', {
+        'products': products
+    })
