@@ -1,8 +1,18 @@
 {% extends 'home/base.html' %} {% block content %}
 <div class="container listing-page">
-  <h2 class="listing-page__title">
-    {% if is_seller_view %}My Listings{% else %}Latest Finds {%endif%}
-  </h2>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 1rem;">
+    <h2 class="listing-page__title" style="margin-bottom: 0;">
+      {% if is_seller_view %}My Listings{% else %}Latest Finds{% endif %}
+    </h2>
+    <div class="category-filter-wrapper">
+      <select id="category-filter" class="form-select" style="min-width: 200px; cursor: pointer;">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
 
   {% if products %}
   <div class="listing-grid">

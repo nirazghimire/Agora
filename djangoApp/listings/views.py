@@ -175,17 +175,21 @@ def seller_reviews(request):
 def search_products_ajax(request):
     """Return partial HTML containing filtered product cards."""
     q = request.GET.get('q', '').strip()
+    category = request.GET.get('category', '').strip()
     
     # We apply the same general constraint that only approved items are shown.
     base_query = Product.objects.filter(is_approved=True, seller__is_active=True)
     
     if q:
         from django.db.models import Q
-        products = base_query.filter(
+        base_query = base_query.filter(
             Q(name__icontains=q) | Q(description__icontains=q)
-        ).order_by('-id')
-    else:
-        products = base_query.order_by('-id')
+        )
+        
+    if category:
+        base_query = base_query.filter(category=category)
+        
+    products = base_query.order_by('-id')
 
     return render(request, 'listings/product_grid_items.html', {
         'products': products,

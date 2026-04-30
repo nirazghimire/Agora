@@ -19,6 +19,10 @@ def home(request):
     if request.user.is_authenticated and getattr(request.user, 'role', '') == 'admin':
         return redirect('admin_dashboard')
 
+    # Fetch unique, non-empty categories
+    raw_categories = Product.objects.filter(is_approved=True, seller__is_active=True).values_list('category', flat=True).distinct()
+    categories = sorted(list(set(cat.strip() for cat in raw_categories if cat and cat.strip())))
+
     if request.user.is_authenticated and getattr(request.user, 'is_seller', False):
         products = Product.objects.filter(seller=request.user).order_by('-id')
         is_seller_view = True
@@ -26,7 +30,7 @@ def home(request):
         # Only show products from active sellers that are approved
         products = Product.objects.filter(is_approved=True, seller__is_active=True).order_by('-id')
         is_seller_view = False
-    return render(request, 'home/index.html', {'products': products, 'is_seller_view': is_seller_view})
+    return render(request, 'home/index.html', {'products': products, 'is_seller_view': is_seller_view, 'categories': categories})
 
 
 

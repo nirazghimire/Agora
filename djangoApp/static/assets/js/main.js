@@ -57,23 +57,25 @@ function initMobileNav() {
 
 function initProductSearch() {
   const searchInput = document.getElementById("product-search");
-  if (!searchInput) return;
+  const categoryFilter = document.getElementById("category-filter");
+  if (!searchInput && !categoryFilter) return;
 
   let debounceTimer;
   let latestRequestId = 0;
 
-  searchInput.addEventListener("input", () => {
+  const performSearch = () => {
     clearTimeout(debounceTimer);
     //important concept of debouncing
     debounceTimer = setTimeout(() => {
-      const searchTerm = searchInput.value.toLowerCase().trim();
+      const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
+      const categoryTerm = categoryFilter ? categoryFilter.value : "";
       const grid = document.querySelector(".listing-grid");
       let emptyStateContainer = document.querySelector(".listing-empty-state-wrapper");
       const requestId = ++latestRequestId;
 
       if (emptyStateContainer) emptyStateContainer.style.display = "none";
 
-      fetch(`/search-ajax/?q=${encodeURIComponent(searchTerm)}`)
+      fetch(`/search-ajax/?q=${encodeURIComponent(searchTerm)}&category=${encodeURIComponent(categoryTerm)}`)
         .then((res) => {
           if (!res.ok) throw new Error("Search failed");
           return res.text();
@@ -112,7 +114,14 @@ function initProductSearch() {
           }
         });
     }, 300);
-  });
+  };
+
+  if (searchInput) {
+    searchInput.addEventListener("input", performSearch);
+  }
+  if (categoryFilter) {
+    categoryFilter.addEventListener("change", performSearch);
+  }
 }
 
 function initQuickviewModal() {
